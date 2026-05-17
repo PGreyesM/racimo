@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Racimo de Conversaciones — Propuesta de UX</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", system-ui, sans-serif;
+  background: #FAFAF7;
+  color: #1A1A19;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.container { max-width: 760px; margin: 0 auto; padding: 20px 16px 40px; }
+.proposal-header { margin: 0 0 20px; padding-bottom: 18px; border-bottom: 0.5px solid rgba(0,0,0,0.1); }
+.proposal-title { font-size: 24px; font-weight: 500; margin: 0 0 4px; color: #1A1A19; letter-spacing: -0.2px; }
+.proposal-subtitle { font-size: 14px; color: #5F5E5A; margin: 0 0 14px; }
+.proposal-abstract { font-size: 13px; color: #444441; line-height: 1.6; margin: 0; max-width: 640px; }
+.intro { font-size: 12px; color: #888780; margin: 0 0 10px; text-align: center; font-style: italic; }
+.intro b { color: #1A1A19; font-weight: 500; }
+
+.search-bar {
+  display: flex; align-items: center; gap: 8px;
+  background: white; border: 0.5px solid rgba(0,0,0,0.15);
+  border-radius: 10px; padding: 8px 12px; margin-bottom: 10px;
+  transition: border-color .15s;
+}
+.search-bar:focus-within { border-color: #7F77DD; }
+.search-bar svg { width: 16px; height: 16px; color: #888780; flex-shrink: 0; }
+.search-bar input {
+  flex: 1; border: none; background: transparent;
+  font: inherit; font-size: 13px; outline: none; color: #1A1A19; min-width: 0;
+}
+.search-bar input::placeholder { color: #888780; }
+.search-count { font-size: 11px; color: #5F5E5A; white-space: nowrap; padding-left: 6px; border-left: 0.5px solid rgba(0,0,0,0.12); }
+.search-clear { background: none; border: none; cursor: pointer; padding: 2px; color: #888780; display: none; align-items: center; border-radius: 4px; }
+.search-clear:hover { color: #1A1A19; background: #F1EFE8; }
+.search-clear.show { display: inline-flex; }
+.search-clear svg { width: 13px; height: 13px; }
+
+.canvas-area {
+  background: #F1EFE8; border-radius: 12px;
+  padding: 12px; margin-bottom: 10px; position: relative;
+}
+.parra-bar {
+  background: #6B4423;
+  color: #FFFDF7;
+  padding: 9px 14px;
+  margin: -12px -12px 10px;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+  border-bottom: 1px solid #4A2E18;
+  flex-wrap: wrap;
+}
+.parra-bar::before, .parra-bar::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 24px;
+  height: 14px;
+  border: 1.5px solid #97C459;
+  border-radius: 50%;
+  border-color: transparent #97C459 #97C459 transparent;
+  transform: translateY(-50%) rotate(-20deg);
+}
+.parra-bar::before { left: -2px; }
+.parra-bar::after { right: -2px; transform: translateY(-50%) rotate(160deg); }
+.parra-left {
+  display: flex; align-items: center; gap: 8px; min-width: 0;
+}
+.parra-icon { color: #97C459; flex-shrink: 0; }
+.parra-icon svg { width: 18px; height: 18px; }
+.parra-today {
+  font-size: 10px; letter-spacing: 2px;
+  color: #E0B97A; text-transform: uppercase; font-weight: 500;
+}
+.parra-date-text {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 15px; color: #FFFDF7;
+  font-style: italic;
+}
+.parra-right {
+  font-size: 11px;
+  color: #E0B97A;
+  font-style: italic;
+  white-space: nowrap;
+}
+.parra-right b {
+  color: #FFFDF7;
+  font-weight: 500;
+  font-style: normal;
+}
+.no-matches {
+  position: absolute; inset: 0; display: none;
+  align-items: center; justify-content: center;
+  font-size: 13px; color: #5F5E5A; pointer-events: none;
+  background: rgba(241,239,232,0.85); border-radius: 12px;
+}
+.no-matches.show { display: flex; }
+
+.grape {
+  cursor: pointer;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s, r .3s ease;
+  transform-origin: center; transform-box: fill-box;
+}
+.grape:hover { transform: scale(1.15); }
+.grape.selected { transform: scale(1.25); }
+.grape.dimmed { opacity: .25; }
+.grape.related { transform: scale(1.12); }
+.grape.search-match { transform: scale(1.1); }
+.grape.search-hidden { opacity: .12; }
+.link-line { stroke-dasharray: 4 4; opacity: 0; transition: opacity .35s; }
+.link-line.active { opacity: .55; }
+.subbranch-line { stroke: #5F5E5A; stroke-width: 1; fill: none; opacity: .5; }
+.cluster-label { font-size: 12px; font-weight: 500; fill: #5F5E5A; text-anchor: middle; }
+
+.cluster-bar {
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  margin-bottom: 12px;
+}
+.cluster-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: white; border: 0.5px solid rgba(0,0,0,0.12);
+  border-radius: 8px; padding: 6px 10px;
+  font-size: 12px;
+}
+.cluster-chip .chip-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.cluster-chip .chip-name { font-weight: 500; color: #1A1A19; margin-right: 4px; }
+.chip-btn {
+  background: transparent; border: none;
+  color: #5F5E5A; cursor: pointer;
+  padding: 2px 5px; border-radius: 4px;
+  font-size: 11px; display: inline-flex; align-items: center; gap: 3px;
+}
+.chip-btn:hover { background: #F1EFE8; color: #1A1A19; }
+.chip-btn svg { width: 12px; height: 12px; }
+.chip-btn:disabled { opacity: 0.4; cursor: wait; }
+
+.dialog {
+  background: white; border-radius: 12px;
+  border: 0.5px solid rgba(0,0,0,0.12);
+  padding: 14px 16px; min-height: 140px; margin-bottom: 10px;
+}
+.dialog-empty { display: flex; align-items: center; gap: 10px; color: #5F5E5A; font-size: 14px; }
+.dialog-empty svg { width: 18px; height: 18px; flex-shrink: 0; }
+.dialog-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.dh-left { display: flex; align-items: center; gap: 8px; min-width: 0; flex-wrap: wrap; }
+.dh-right { display: flex; gap: 6px; flex-wrap: wrap; }
+.badge { font-size: 11px; padding: 3px 9px; border-radius: 6px; font-weight: 500; white-space: nowrap; }
+.parent-link { font-size: 11px; color: #888780; display: inline-flex; align-items: center; gap: 3px; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+.parent-link:hover { background: #F1EFE8; color: #1A1A19; }
+.parent-link svg { width: 11px; height: 11px; }
+.title { font-size: 14px; font-weight: 500; }
+.btn {
+  font-size: 12px; padding: 6px 11px; background: white;
+  border: 0.5px solid rgba(0,0,0,0.2); border-radius: 6px;
+  cursor: pointer; transition: background .15s, border-color .15s;
+  color: #1A1A19; display: inline-flex; align-items: center; gap: 5px; font: inherit; font-size: 12px;
+}
+.btn:hover { background: #F1EFE8; border-color: rgba(0,0,0,0.35); }
+.btn:disabled { opacity: .5; cursor: wait; }
+.btn svg { width: 13px; height: 13px; }
+.msg {
+  padding: 10px 12px; border-radius: 8px;
+  font-size: 13px; line-height: 1.55; margin-bottom: 6px;
+  white-space: pre-wrap; word-wrap: break-word;
+}
+.msg-u { background: #F1EFE8; }
+.msg-c { background: #E6F1FB; color: #0C447C; }
+.msg-actions { display: flex; justify-content: flex-end; margin: -2px 0 8px; }
+.msg-bif-btn {
+  background: transparent; border: 0.5px solid rgba(0,0,0,0.15);
+  border-radius: 6px; padding: 3px 9px; font-size: 11px;
+  color: #5F5E5A; cursor: pointer; display: inline-flex;
+  align-items: center; gap: 4px; font: inherit; font-size: 11px;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.msg-bif-btn:hover { background: #EEEDFE; border-color: #7F77DD; color: #534AB7; }
+.msg-bif-btn svg { width: 11px; height: 11px; }
+
+.bif-term {
+  background: rgba(127, 119, 221, 0.16);
+  padding: 1px 4px 1px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  color: inherit;
+  transition: background .15s, box-shadow .15s;
+  border-bottom: 1px dashed rgba(83, 74, 183, 0.55);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.bif-term:hover {
+  background: rgba(127, 119, 221, 0.32);
+  border-bottom-color: rgba(83, 74, 183, 0.9);
+}
+.bif-term::after {
+  content: '+';
+  display: inline-block;
+  margin-left: 3px;
+  font-size: 10px;
+  vertical-align: super;
+  line-height: 1;
+  color: #534AB7;
+  font-weight: 700;
+  opacity: 0.65;
+}
+.bif-term:hover::after { opacity: 1; }
+
+body.marks-hidden .bif-term {
+  background: transparent;
+  border-bottom: none;
+  padding: 0;
+  font-weight: inherit;
+  cursor: text;
+}
+body.marks-hidden .bif-term::after { display: none; }
+
+#selection-bif-btn {
+  position: fixed;
+  z-index: 90;
+  display: none;
+  background: #534AB7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 11px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  transition: background .15s, transform .1s;
+  white-space: nowrap;
+}
+#selection-bif-btn:hover { background: #3C3489; }
+#selection-bif-btn:active { transform: scale(0.97); }
+#selection-bif-btn.show { display: inline-flex; }
+#selection-bif-btn svg { width: 12px; height: 12px; }
+
+.search-divider {
+  width: 1px; height: 18px;
+  background: rgba(0,0,0,0.12);
+  margin: 0 4px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.marks-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 6px;
+  color: #888780;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 11px;
+  transition: color .15s, background .15s;
+  flex-shrink: 0;
+}
+.marks-toggle:hover { color: #1A1A19; background: #F1EFE8; }
+.marks-toggle.is-off { color: #534AB7; }
+.marks-toggle svg { width: 14px; height: 14px; }
+
+.cluster-chip.add-chip {
+  background: transparent;
+  border: 0.5px dashed rgba(0,0,0,0.25);
+  color: #5F5E5A;
+  cursor: pointer;
+}
+.cluster-chip.add-chip:hover {
+  background: #F1EFE8;
+  color: #1A1A19;
+  border-color: rgba(0,0,0,0.45);
+}
+.cluster-chip.add-chip svg { width: 13px; height: 13px; }
+
+.color-palette { display: flex; gap: 8px; margin: 6px 0 4px; flex-wrap: wrap; }
+.color-swatch {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s;
+}
+.color-swatch:hover { transform: scale(1.1); }
+.color-swatch.selected { border-color: #1A1A19; }
+
+.wine-modal {
+  background: #FFFDF7 !important;
+  border: 0.5px solid #F0D58C;
+}
+.wine-cap {
+  text-align: center; padding: 6px 0 2px;
+  color: #BA7517;
+}
+.wine-cap svg { width: 28px; height: 28px; }
+.wine-label {
+  text-align: center;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 0.5px solid rgba(186, 117, 23, 0.3);
+}
+.wine-kicker {
+  font-size: 10px; letter-spacing: 3px; color: #BA7517;
+  font-weight: 500; margin-bottom: 6px;
+}
+.wine-name {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24px; font-weight: 400;
+  color: #4A1B0C; margin: 0; letter-spacing: 0.5px;
+}
+.wine-meta { font-size: 12px; color: #854F0B; margin-top: 6px; font-style: italic; }
+.wine-body {
+  background: transparent;
+  border: none;
+  padding: 0 4px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #2C2C2A;
+  white-space: pre-wrap;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.wine-body strong { color: #4A1B0C; font-weight: 500; }
+
+.cellar { margin-top: 18px; }
+.cellar-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+.cellar-card {
+  background: #FFFDF7;
+  border: 0.5px solid #F0D58C;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.cellar-card:hover {
+  transform: translateY(-2px);
+  border-color: #BA7517;
+}
+.cellar-card-name {
+  font-family: Georgia, serif;
+  font-size: 14px;
+  color: #4A1B0C;
+}
+.cellar-card-meta {
+  font-size: 10px;
+  color: #854F0B;
+  font-style: italic;
+}
+.cellar-card-snippet {
+  font-size: 11px;
+  color: #5F5E5A;
+  margin-top: 2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cellar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -4px 4px 10px;
+  flex-wrap: wrap;
+}
+.cellar-count {
+  font-size: 11px;
+  color: #854F0B;
+  font-style: italic;
+}
+.fiesta-btn {
+  background: #4A1B0C;
+  color: #FFFDF7;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background .15s, transform .1s;
+}
+.fiesta-btn.show { display: inline-flex; }
+.fiesta-btn:hover { background: #712B13; }
+.fiesta-btn:active { transform: scale(0.97); }
+.fiesta-btn svg { width: 14px; height: 14px; }
+
+.fiesta-wine-pick {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 12px;
+  background: #FFFDF7;
+  border: 0.5px solid #F0D58C;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.fiesta-wine-pick:hover { border-color: #BA7517; }
+.fiesta-wine-pick.selected { background: #FAEEDA; border-color: #EF9F27; }
+.fiesta-wine-pick input[type=checkbox] { margin: 3px 0 0; cursor: pointer; flex-shrink: 0; accent-color: #4A1B0C; }
+.fiesta-wine-pick-content { flex: 1; min-width: 0; }
+.fiesta-wine-pick-name { font-family: Georgia, serif; font-size: 14px; color: #4A1B0C; }
+.fiesta-wine-pick-meta { font-size: 10px; color: #854F0B; font-style: italic; margin-top: 2px; }
+.fiesta-wine-pick-snippet { font-size: 11px; color: #5F5E5A; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.fiesta-toggle-row {
+  display: flex; align-items: center; gap: 8px;
+  margin: 12px 0 4px;
+  font-size: 12px;
+  color: #5F5E5A;
+}
+.fiesta-toggle-row input[type=checkbox] { accent-color: #4A1B0C; cursor: pointer; }
+.fiesta-toggle-row label { margin: 0; cursor: pointer; font-size: 12px; color: #5F5E5A; }
+
+.chat-area { margin-top: 10px; padding-top: 12px; border-top: 0.5px solid rgba(0,0,0,0.1); }
+.chat-input-row {
+  display: flex; align-items: center; gap: 8px;
+  background: white; border: 0.5px solid rgba(0,0,0,0.15);
+  border-radius: 10px; padding: 6px 6px 6px 12px;
+  margin-top: 8px; transition: border-color .15s;
+}
+.chat-input-row:focus-within { border-color: #7F77DD; }
+.chat-input-row input {
+  flex: 1; border: none; background: transparent;
+  font: inherit; font-size: 13px; outline: none; color: #1A1A19; min-width: 0;
+}
+.chat-input-row input::placeholder { color: #888780; }
+.send-btn {
+  background: #7F77DD; color: white; border: none;
+  border-radius: 6px; padding: 6px 11px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 4px;
+  font: inherit; font-size: 12px; font-weight: 500;
+  transition: background .15s;
+}
+.send-btn:hover:not(:disabled) { background: #534AB7; }
+.send-btn:disabled { background: #B4B2A9; cursor: not-allowed; }
+.send-btn svg { width: 12px; height: 12px; }
+
+.thinking {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 10px 12px; background: #E6F1FB; color: #0C447C;
+  border-radius: 8px; margin-bottom: 6px; font-size: 12px;
+}
+.thinking-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+  animation: bounce 1.2s infinite ease-in-out;
+}
+.thinking-dot:nth-child(2) { animation-delay: 0.15s; }
+.thinking-dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-3px); opacity: 1; }
+}
+
+.notes { margin-top: 12px; padding-top: 12px; border-top: 0.5px solid rgba(0,0,0,0.1); }
+.notes-head { font-size: 11px; color: #5F5E5A; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+.notes-head svg { width: 13px; height: 13px; }
+.notes textarea {
+  width: 100%; border: 0.5px solid rgba(0,0,0,0.15);
+  border-radius: 6px; padding: 7px 9px; font: inherit; font-size: 12px;
+  resize: vertical; min-height: 48px; background: #FFFDF7; color: #1A1A19;
+}
+.notes textarea:focus { outline: none; border-color: #7F77DD; background: white; }
+.saved-flash { font-size: 10px; color: #639922; margin-left: 6px; opacity: 0; transition: opacity .3s; }
+.saved-flash.show { opacity: 1; }
+
+.sim { display: none; }
+.divider { text-align: center; font-size: 10px; color: #888780; padding: 10px 0 8px; letter-spacing: 1px; font-weight: 500; }
+.divider::before, .divider::after { content: ''; display: inline-block; width: 60px; height: .5px; background: rgba(0,0,0,0.12); vertical-align: middle; margin: 0 10px; }
+.bubble-u, .bubble-c { border-radius: 12px; padding: 12px; max-width: 88%; }
+.bubble-u { background: #F1EFE8; }
+.bubble-c { background: #E6F1FB; color: #0C447C; }
+.row-r { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+.row-l { display: flex; justify-content: flex-start; }
+.cited-card { display: flex; background: white; border: 0.5px solid rgba(0,0,0,0.12); border-radius: 8px; overflow: hidden; cursor: pointer; transition: border-color .2s, transform .2s; color: #1A1A19; }
+.cited-card:hover { border-color: rgba(0,0,0,0.3); transform: translateY(-1px); }
+.stripe { width: 3px; flex-shrink: 0; }
+.cb { padding: 9px 12px; flex: 1; min-width: 0; }
+.ch { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #5F5E5A; margin-bottom: 3px; }
+.ch svg { width: 11px; height: 11px; }
+.ct { font-size: 13px; font-weight: 500; color: #1A1A19; }
+.cs { font-size: 12px; color: #5F5E5A; margin-top: 3px; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+.legend { display: flex; gap: 18px; justify-content: center; font-size: 12px; color: #5F5E5A; padding: 4px 0 6px; }
+.dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; vertical-align: -1px; margin-right: 5px; }
+.persist-hint { font-size: 11px; color: #888780; text-align: center; padding: 12px 0 2px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+.persist-hint svg { width: 12px; height: 12px; }
+
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  z-index: 100; display: none;
+  align-items: center; justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: white; border-radius: 12px; padding: 20px;
+  max-width: 520px; width: 100%; max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+.modal h3 { margin: 0 0 4px; font-size: 16px; font-weight: 500; }
+.modal-sub { font-size: 12px; color: #5F5E5A; margin: 0 0 16px; }
+.modal label { display: block; font-size: 12px; color: #5F5E5A; margin: 12px 0 4px; }
+.modal input[type=text], .modal textarea {
+  width: 100%; border: 0.5px solid rgba(0,0,0,0.15);
+  border-radius: 6px; padding: 8px 10px; font: inherit; font-size: 13px;
+  background: white; color: #1A1A19;
+}
+.modal input[type=text]:focus, .modal textarea:focus { outline: none; border-color: #7F77DD; }
+.modal textarea { resize: vertical; min-height: 70px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.distill-body {
+  background: #FFFDF7; border: 0.5px solid #F0D58C;
+  border-radius: 8px; padding: 12px 14px;
+  font-size: 13px; line-height: 1.6; white-space: pre-wrap;
+  max-height: 50vh; overflow-y: auto;
+}
+.distill-meta { font-size: 11px; color: #5F5E5A; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="proposal-header">
+  <h1 class="proposal-title">Racimo de Conversaciones</h1>
+  <p class="proposal-subtitle">Una propuesta de navegación espacial para conversaciones con LLMs</p>
+  <p class="proposal-abstract">Tres ideas integradas: (1) las conversaciones viven como uvas agrupadas en racimos por tema, no como un scroll lineal; (2) cualquier respuesta puede bifurcarse en una sub-rama que hereda todo el contexto del padre; (3) la destilación de un racimo es un output de primera clase, descargable y persistente. Demo navegable a continuación.</p>
+</div>
+<p class="intro">Pincha una uva. Selecciona cualquier frase o usa los conceptos <span style="background:rgba(127,119,221,0.16);padding:0 4px;border-radius:3px;border-bottom:1px dashed rgba(83,74,183,0.55);">resaltados</span> para bifurcar en sub-ramas. El icono del ojo en el buscador alterna entre lectura limpia y resaltada.</p>
+
+<div class="search-bar">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <input type="text" id="search-input" placeholder="Buscar por título, pregunta o respuesta..." autocomplete="off">
+  <span class="search-count" id="search-count" style="display:none;"></span>
+  <button class="search-clear" id="search-clear" title="Limpiar búsqueda">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <span class="search-divider"></span>
+  <button class="marks-toggle" id="marks-toggle" title="Mostrar u ocultar los conceptos resaltados">
+    <svg id="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    <svg id="eye-off" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+    <span id="marks-toggle-label">Resaltados</span>
+  </button>
+</div>
+
+<div class="cluster-bar" id="cluster-bar"></div>
+
+<div class="canvas-area">
+<svg id="canvas-svg" viewBox="0 0 680 460" width="100%" style="display: block; height: auto;">
+  <defs id="grape-defs">
+    <filter id="grape-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.2" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <g id="links-layer"></g>
+  <g id="subbranch-layer"></g>
+  <g id="stems-layer"></g>
+  <g id="grapes-layer"></g>
+  <g id="labels-layer"></g>
+</svg>
+<div class="no-matches" id="no-matches">Ninguna uva coincide con tu búsqueda.</div>
+</div>
+
+<div class="dialog">
+  <div class="dialog-empty" id="dialog-empty">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.92 3.5a8.5 8.5 0 1 1-3.42 12.5"/><path d="M3 12l5-5"/><path d="M3 12l5 5"/></svg>
+    <span>Pincha una uva para abrir esa conversación.</span>
+  </div>
+  <div id="dialog-content" style="display: none;">
+    <div class="dialog-header">
+      <div class="dh-left">
+        <span class="badge" id="dialog-badge"></span>
+        <span class="title" id="dialog-title"></span>
+        <span class="parent-link" id="parent-link" style="display:none;"></span>
+      </div>
+      <div class="dh-right">
+        <button class="btn" id="dialog-bifurcar" title="Bifurca una sub-rama desde esta uva, llevándose todo el contexto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg>
+          Bifurcar
+        </button>
+        <button class="btn" id="dialog-ref">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11 6l.463-.536a5 5 0 1 1 7.072 7.072L18 13"/><path d="M13 18l-.5.5a5 5 0 1 1-7-7L6 11"/></svg>
+          Citar
+        </button>
+      </div>
+    </div>
+    <div class="msg msg-u" id="msg-user"></div>
+    <div class="msg msg-c" id="msg-claude"></div>
+    <div class="msg-actions">
+      <button class="msg-bif-btn" id="msg-claude-bif" title="Crear sub-rama tomando esta respuesta como contexto inicial">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg>
+        Bifurcar desde aquí
+      </button>
+    </div>
+
+    <div class="chat-area">
+      <div id="chat-history"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Continúa la conversación con esta uva..." autocomplete="off">
+        <button class="send-btn" id="chat-send">
+          Enviar
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="notes-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1-2-2v-14a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="14" y2="16"/></svg>
+        Mis notas sobre esta uva
+        <span class="saved-flash" id="saved-flash">guardado</span>
+      </div>
+      <textarea id="notes-input" placeholder="Añade un pensamiento, una pregunta pendiente, una idea para retomar..."></textarea>
+    </div>
+  </div>
+</div>
+
+<div class="sim" id="chat-sim">
+  <div class="divider">VISTA PREVIA EN EL CHAT</div>
+  <div class="row-r">
+    <div class="bubble-u">
+      <div class="cited-card" style="margin-bottom: 10px;">
+        <div class="stripe" id="uc-stripe"></div>
+        <div class="cb">
+          <div class="ch">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11 6l.463-.536a5 5 0 1 1 7.072 7.072L18 13"/><path d="M13 18l-.5.5a5 5 0 1 1-7-7L6 11"/></svg>
+            <span id="uc-cluster"></span>
+          </div>
+          <div class="ct" id="uc-title"></div>
+          <div class="cs" id="uc-snippet"></div>
+        </div>
+      </div>
+      <div style="font-size: 13px;">Quería retomar esto contigo: ¿podemos profundizar y aplicar lo que vimos a mi situación actual?</div>
+    </div>
+  </div>
+  <div class="row-l">
+    <div class="bubble-c">
+      <div style="font-size: 13px; line-height: 1.55; margin-bottom: 10px;" id="response-text"></div>
+      <div id="claude-card-wrap" style="display: none;">
+        <div style="font-size: 11px; opacity: .85; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l18 0"/><path d="M3 18l18 0"/><path d="M16 3l5 3l-5 3"/><path d="M8 15l-5 3l5 3"/></svg>
+          También conversamos sobre esto:
+        </div>
+        <div class="cited-card">
+          <div class="stripe" id="cc-stripe"></div>
+          <div class="cb">
+            <div class="ch">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>
+              <span id="cc-cluster"></span>
+            </div>
+            <div class="ct" id="cc-title"></div>
+            <div class="cs" id="cc-snippet"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <span><span class="dot" style="background: #7F77DD;"></span>Trabajo</span>
+  <span><span class="dot" style="background: #97C459;"></span>Personal</span>
+  <span><span class="dot" style="background: #ED93B1;"></span>Aprendizaje</span>
+</div>
+
+<div class="persist-hint">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg>
+  Las uvas, los chats, las notas y los vinos viven en este artifact.
+</div>
+
+
+</div>
+
+<!-- Modal: new uva -->
+<div class="modal-overlay" id="modal-new">
+  <div class="modal">
+    <h3>Nueva uva en <span id="new-cluster-name"></span></h3>
+    <p class="modal-sub">Empezarás una conversación nueva con Claude sobre este tema.</p>
+    <label>Título de la uva</label>
+    <input type="text" id="new-uva-title" placeholder="ej. Cómo organizar el cumpleaños">
+    <label>Tu primera pregunta</label>
+    <textarea id="new-uva-question" placeholder="¿Qué quieres preguntar?"></textarea>
+    <div class="modal-actions">
+      <button class="btn" id="new-cancel">Cancelar</button>
+      <button class="send-btn" id="new-create">Crear y pedir respuesta</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: bifurcar -->
+<div class="modal-overlay" id="modal-bifurcar">
+  <div class="modal">
+    <h3>Bifurcar sub-rama</h3>
+    <p class="modal-sub">La nueva uva hereda todo el contexto de "<span id="bif-parent-title"></span>". Úsalo cuando quieras explorar una tangente sin contaminar el hilo principal.</p>
+    <div id="bif-seed-wrap" style="display:none; margin-bottom: 4px;">
+      <label style="margin-top: 0;">Bifurcando a partir de esta respuesta de Claude:</label>
+      <div id="bif-seed" style="background: #E6F1FB; color: #0C447C; padding: 8px 10px; border-radius: 6px; font-size: 12px; line-height: 1.5; max-height: 100px; overflow-y: auto; white-space: pre-wrap;"></div>
+    </div>
+    <label>Título de la sub-rama</label>
+    <input type="text" id="bif-title" placeholder="ej. Profundizar en el subtema X">
+    <label>Tu primera pregunta para la sub-rama</label>
+    <textarea id="bif-question" placeholder="¿Qué quieres explorar a partir de aquí?"></textarea>
+    <div class="modal-actions">
+      <button class="btn" id="bif-cancel">Cancelar</button>
+      <button class="send-btn" id="bif-create">Bifurcar y preguntar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: síntesis del racimo -->
+<div class="modal-overlay" id="modal-distill">
+  <div class="modal" style="max-width: 580px;">
+    <h3 id="distill-cluster-name">Síntesis del racimo</h3>
+    <p class="modal-sub" id="distill-meta">—</p>
+    <div class="distill-body" id="distill-body">Preparando síntesis...</div>
+    <div class="modal-actions">
+      <button class="btn" id="distill-download" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Descargar .md
+      </button>
+      <button class="btn" id="distill-copy" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar
+      </button>
+      <button class="send-btn" id="distill-close">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: nuevo racimo -->
+<div class="modal-overlay" id="modal-new-racimo">
+  <div class="modal">
+    <h3>Crear un nuevo racimo</h3>
+    <p class="modal-sub">Los racimos agrupan tus uvas por tema o área de vida.</p>
+    <label>Nombre del racimo</label>
+    <input type="text" id="nr-name" placeholder="ej. Salud, Familia, Side project, Inversiones..." maxlength="24">
+    <label>Color</label>
+    <div class="color-palette" id="nr-palette"></div>
+    <div class="modal-actions">
+      <button class="btn" id="nr-cancel">Cancelar</button>
+      <button class="send-btn" id="nr-create">Crear racimo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CLUSTERS = {
+  Trabajo:     { centerX: 150, anchorY: 55, fill: '#7F77DD', stroke: '#534AB7', stripe: '#7F77DD', badge: '#EEEDFE', textColor: '#3C3489', stemTop: { x: 150, y: 25 }, leaf: { x: 135, y: 32 } },
+  Personal:    { centerX: 530, anchorY: 55, fill: '#97C459', stroke: '#3B6D11', stripe: '#97C459', badge: '#EAF3DE', textColor: '#27500A', stemTop: { x: 530, y: 25 }, leaf: { x: 515, y: 32 } },
+  Aprendizaje: { centerX: 340, anchorY: 255,fill: '#ED93B1', stroke: '#993556', stripe: '#ED93B1', badge: '#FBEAF0', textColor: '#72243E', stemTop: { x: 340, y: 225 }, leaf: { x: 325, y: 232 } }
+};
+
+// Pre-baked syntheses per cluster, used as fallback when askClaude is not available
+// (e.g. standalone HTML opened in a browser without the Cowork bridge).
+const DEMO_SYNTHESES = {
+  Trabajo: '**Temas dominantes**\nEste racimo gira alrededor del trabajo de un product manager o líder de equipo en mitad de un trimestre activo. Domina la preocupación por la comunicación interna (reuniones, all-hands, emails), la definición de prioridades (PRD, roadmap, estimaciones), y la lectura del entorno (encuesta de usuarios, análisis de competencia).\n\n**Decisiones e ideas clave**\n— Estructurar el dashboard del Q2 en tres bloques: adquisición, retención, monetización.\n— El PRD necesita métricas de éxito explícitas y un plan de rollback antes de mandarlo.\n— La estimación del feature de notificaciones es de 3-4 semanas, con riesgo real de subestimar la configuración por usuario.\n— Los tres temas dominantes en la encuesta son lentitud de carga, confusión de onboarding, y demanda de modo oscuro.\n\n**Preguntas abiertas**\nLa tensión entre apuestas grandes y mejoras incrementales en el roadmap Q3 todavía no está resuelta. Tampoco está claro qué se va a decir en el all-hands más allá del win inicial — el bloque de propuesta accionable falta. Y la decisión de qué priorizar de la encuesta (¿velocidad? ¿onboarding? ¿modo oscuro?) merece su propia conversación.',
+
+  Personal: '**Temas dominantes**\nEste racimo retrata a alguien en mitad de varias decisiones personales — un viaje a Japón, una posible mudanza, una bici nueva, un mensaje difícil a un amigo — y también de necesidades cotidianas como recetas o rutina de ejercicio. Lo une la práctica de pensar en voz alta antes de actuar.\n\n**Decisiones e ideas clave**\n— Para Japón en octubre: Tokio 4 días, Kioto 3, Hakone 1, Kanazawa 2.\n— Rutina de ejercicio sin pesas estructurada en tres días: empuje, tirón y core, piernas.\n— Marco para el mensaje difícil al amigo: foco en el efecto ("cuando pasó X, sentí Y"), no en la intención.\n— Carta de cumpleaños para la hermana: recuerdo concreto, admiración actual, deseo claro al final.\n\n**Preguntas abiertas**\nLa decisión de quedarse o mudarse aún no está cerrada — el ejercicio de listar qué da energía hoy versus lo que la quita está por hacer. La compra de bici (urbana vs gravel) depende de la proporción real de uso entre semana y fin de semana, que no se ha medido todavía. Y el libro de la siguiente lectura sigue oscilando entre dos opciones.',
+
+  Aprendizaje: '**Temas dominantes**\nEste racimo dibuja a alguien en un periodo de aprender muchas cosas a la vez: escritura creativa, estadística, métricas de producto, alemán, filosofía estoica, música clásica, negociación, diseño tipográfico, historia del siglo XX. Lo curioso es que casi todas las disciplinas comparten una misma estructura — piden oído paciente más que técnica brillante.\n\n**Decisiones e ideas clave**\n— Personajes creíbles se construyen con contradicciones pequeñas, no con descripciones largas.\n— Las métricas estrella de un SaaS (activación, retención) van separadas de las de salud (NPS, latencia); una estrella norte por trimestre.\n— Para aprender un idioma, sobra gramática y falta exposición: 20 minutos diarios de audio nativo desbloquean más que un curso completo.\n— Empezar con estoicismo: Marco Aurelio primero, Séneca después, Epicteto si sigue interesando.\n\n**Preguntas abiertas**\nEl método se repite: cada disciplina pide repetición paciente. Falta convertir ese descubrimiento en una rutina concreta — qué disciplina priorizar este mes, qué cadencia de práctica funciona. La conexión entre "Métricas de producto" aquí y "Revisión del PRD" en el racimo Trabajo merece su propia sub-rama.'
+};
+
+// Palette for new user-created racimos (each gets a distinct ramp)
+const PALETTE = [
+  { name: 'Azul',    fill: '#378ADD', stroke: '#185FA5', stripe: '#378ADD', badge: '#E6F1FB', textColor: '#0C447C' },
+  { name: 'Teal',    fill: '#1D9E75', stroke: '#0F6E56', stripe: '#1D9E75', badge: '#E1F5EE', textColor: '#085041' },
+  { name: 'Coral',   fill: '#D85A30', stroke: '#993C1D', stripe: '#D85A30', badge: '#FAECE7', textColor: '#712B13' },
+  { name: 'Ámbar',   fill: '#EF9F27', stroke: '#BA7517', stripe: '#EF9F27', badge: '#FAEEDA', textColor: '#633806' },
+  { name: 'Granate', fill: '#E24B4A', stroke: '#A32D2D', stripe: '#E24B4A', badge: '#FCEBEB', textColor: '#791F1F' },
+  { name: 'Grafito', fill: '#888780', stroke: '#5F5E5A', stripe: '#888780', badge: '#F1EFE8', textColor: '#2C2C2A' }
+];
+
+const RACIMO_SLOTS = [
+  { centerX: 150, anchorY: 455 },
+  { centerX: 530, anchorY: 455 },
+  { centerX: 340, anchorY: 655 },
+  { centerX: 150, anchorY: 855 },
+  { centerX: 530, anchorY: 855 },
+  { centerX: 340, anchorY: 1055 }
+];
+
+function nextRacimoSlot(idx) {
+  if (idx < RACIMO_SLOTS.length) return RACIMO_SLOTS[idx];
+  return { centerX: 340, anchorY: 1055 + (idx - 5) * 200 };
+}
+
+const INITIAL_UVAS = [
+  {id:'t1',cluster:'Trabajo',cx:150,cy:55, title:'Diseño del nuevo dashboard',u:'¿Cómo estructuro el dashboard con los KPIs del Q2?',c:'Sugiero tres bloques: [[adquisición]], [[retención]] y [[monetización]].'},
+  {id:'t2',cluster:'Trabajo',cx:130,cy:85, title:'Revisión del PRD',u:'Lee el PRD adjunto y dime qué falta antes de mandarlo.',c:'Scope claro, faltan métricas de éxito explícitas y un plan de rollback.',related:'a3'},
+  {id:'t3',cluster:'Trabajo',cx:170,cy:85, title:'Email al equipo de legal',u:'Redacta un email pidiendo revisión del contrato.',c:'Borrador conciso, asunto claro, los tres puntos críticos resaltados.'},
+  {id:'t4',cluster:'Trabajo',cx:110,cy:115,title:'Plan de la reunión 1:1',u:'Prepara la 1:1 con mi manager esta semana.',c:'Tres temas: bloqueos, decisión pendiente, feedback bidireccional.'},
+  {id:'t5',cluster:'Trabajo',cx:150,cy:115,title:'Estimación de esfuerzo',u:'¿Cuánto tarda implementar el feature de notificaciones?',c:'3-4 semanas con un dev. La configuración por usuario se subestima.'},
+  {id:'t6',cluster:'Trabajo',cx:190,cy:115,title:'Síntesis de la encuesta',u:'Resume los hallazgos de la encuesta de usuarios.',c:'Tres temas: [[carga lenta]], [[onboarding confuso]], demanda de [[modo oscuro]].'},
+  {id:'t7',cluster:'Trabajo',cx:130,cy:145,title:'Roadmap del próximo trimestre',u:'Primer borrador del roadmap Q3.',c:'Tres apuestas grandes, cuatro mejoras incrementales, dependencias marcadas.'},
+  {id:'t8',cluster:'Trabajo',cx:170,cy:145,title:'Análisis de competencia',u:'Compara nuestras features con los tres competidores principales.',c:'Por delante en personalización y precio, rezagados en integraciones.'},
+  {id:'t9',cluster:'Trabajo',cx:150,cy:175,title:'Borrador del all-hands',u:'Estructura mi parte del all-hands del viernes.',c:'Arranca con un win, muestra un dato sorprendente, cierra con algo accionable.'},
+  {id:'p1',cluster:'Personal',cx:530,cy:55, title:'Plan de viaje a Japón',u:'Tengo 10 días en octubre, ¿qué ruta me recomiendas?',c:'Tokio 4, [[Kioto]] 3, [[Hakone]] 1, y deja 2 noches para [[Kanazawa]].'},
+  {id:'p2',cluster:'Personal',cx:510,cy:85, title:'Receta para la cena',u:'Tengo pollo, espinacas y arroz. ¿Qué hago?',c:'Bowl salteado: pollo con ajo, espinacas al final, arroz, huevo encima.'},
+  {id:'p3',cluster:'Personal',cx:550,cy:85, title:'Carta de cumpleaños',u:'Escribirle algo bonito a mi hermana por su cumple.',c:'Elige un recuerdo concreto, di por qué la admiras hoy, deseo claro al final.',related:'a1'},
+  {id:'p4',cluster:'Personal',cx:490,cy:115,title:'Rutina de ejercicio',u:'Diseña una rutina 3 días por semana, sin pesas.',c:'Día A empuje, día B tirón y core, día C piernas.'},
+  {id:'p5',cluster:'Personal',cx:530,cy:115,title:'Lista de la compra',u:'Arma la lista para la semana.',c:'Organizada por sección del súper para que tardes menos.'},
+  {id:'p6',cluster:'Personal',cx:570,cy:115,title:'Mensaje difícil a un amigo',u:'Decirle a un amigo que algo me dolió, sin sonar agresivo.',c:'Foco en el efecto, no la intención: "cuando pasó X, sentí Y".'},
+  {id:'p7',cluster:'Personal',cx:510,cy:145,title:'Compra de bici nueva',u:'Compara bici urbana vs gravel para uso mixto.',c:'Más entre semana: urbana. Findes pesan: gravel.'},
+  {id:'p8',cluster:'Personal',cx:550,cy:145,title:'Decisión sobre la mudanza',u:'¿Cómo decido entre quedarme o mudarme?',c:'Lista qué te da energía hoy y qué te la quita. Compara con la mudanza.'},
+  {id:'p9',cluster:'Personal',cx:530,cy:175,title:'Libros recomendados',u:'Algo que se lea rápido pero deje poso.',c:'"Stoner" de John Williams. "Klara y el sol" de Ishiguro.'},
+  {id:'a1',cluster:'Aprendizaje',cx:340,cy:255,title:'Escritura creativa',u:'¿Cómo escribir un personaje creíble sin sobreexplicarlo?',c:'Contradicciones pequeñas: lo que dice vs lo que hace.',related:'p3'},
+  {id:'a2',cluster:'Aprendizaje',cx:320,cy:285,title:'Conceptos de estadística',u:'Explica intervalos de confianza como si tuviera 12 años.',c:'100 muestras, el intervalo 95% capturaría la verdad en unas 95.'},
+  {id:'a3',cluster:'Aprendizaje',cx:360,cy:285,title:'Métricas de producto',u:'¿Qué métricas importan en un SaaS?',c:'Estrella ([[activación]], [[retención]]) vs salud ([[NPS]], [[latencia]]). Una [[estrella norte]] por trimestre.',related:'t2'},
+  {id:'a4',cluster:'Aprendizaje',cx:300,cy:315,title:'Aprender alemán',u:'Llevo 3 meses y me cuesta avanzar.',c:'Sobra gramática, falta exposición. 20 min diarios de audio nativo.'},
+  {id:'a5',cluster:'Aprendizaje',cx:340,cy:315,title:'Filosofía estoica',u:'¿Por dónde empiezo si no sé nada de estoicismo?',c:'"Meditaciones" de [[Marco Aurelio]]. Luego "Cartas a Lucilio" de [[Séneca]]. Salta a [[Epicteto]] si te enganchas.'},
+  {id:'a6',cluster:'Aprendizaje',cx:380,cy:315,title:'Música clásica',u:'Quiero educar el oído. ¿Por dónde empiezo?',c:'[[Bach]] (estructura), [[Chopin]] (emoción), [[Stravinsky]] (ritmo).'},
+  {id:'a7',cluster:'Aprendizaje',cx:320,cy:345,title:'Negociación de salario',u:'¿Cómo negocio sin sonar exigente?',c:'Argumenta desde mercado e impacto, no desde necesidad.'},
+  {id:'a8',cluster:'Aprendizaje',cx:360,cy:345,title:'Diseño tipográfico',u:'¿Por qué algunas tipografías se sienten profesionales?',c:'Proporciones discretas, contraste medio, sin personalidad chillona.'},
+  {id:'a9',cluster:'Aprendizaje',cx:340,cy:375,title:'Historia del siglo XX',u:'Recomiéndame un libro de historia del siglo XX.',c:'"El siglo XX" de [[Eric Hobsbawm]]. O "Postguerra" de [[Tony Judt]], que cubre Europa de [[1945]] a 2005.'}
+];
+
+const LS_SELECTED        = 'racimo_selected_id_v1';
+const LS_NOTES_PFX       = 'racimo_notes_v1_';
+const LS_CHAT_PFX        = 'racimo_chat_v1_';
+const LS_SIM_OPEN        = 'racimo_sim_open_v1';
+const LS_CUSTOM          = 'racimo_custom_uvas_v2';
+const LS_CUSTOM_CLUSTERS = 'racimo_custom_clusters_v1';
+const LS_CELLAR          = 'racimo_cellar_v1';
+
+// Load custom clusters into CLUSTERS before processing uvas
+try {
+  const customClusters = JSON.parse(localStorage.getItem(LS_CUSTOM_CLUSTERS) || '[]');
+  customClusters.forEach((cc, i) => {
+    const slot = nextRacimoSlot(i);
+    CLUSTERS[cc.name] = Object.assign({}, cc.color, {
+      centerX: cc.centerX || slot.centerX,
+      anchorY: cc.anchorY || slot.anchorY,
+      stemTop: { x: cc.centerX || slot.centerX, y: (cc.anchorY || slot.anchorY) - 30 },
+      leaf: { x: (cc.centerX || slot.centerX) - 15, y: (cc.anchorY || slot.anchorY) - 23 },
+      custom: true
+    });
+  });
+} catch (e) {}
+
+function persistCustomClusters() {
+  const customs = Object.entries(CLUSTERS).filter(([n, c]) => c.custom).map(([n, c]) => ({
+    name: n, centerX: c.centerX, anchorY: c.anchorY,
+    color: { fill: c.fill, stroke: c.stroke, stripe: c.stripe, badge: c.badge, textColor: c.textColor }
+  }));
+  try { localStorage.setItem(LS_CUSTOM_CLUSTERS, JSON.stringify(customs)); } catch (e) {}
+}
+
+let data = {};
+INITIAL_UVAS.forEach(u => { data[u.id] = Object.assign({}, u, CLUSTERS[u.cluster]); });
+
+// Load custom uvas
+try {
+  const custom = JSON.parse(localStorage.getItem(LS_CUSTOM) || '[]');
+  custom.forEach(u => { data[u.id] = Object.assign({}, u, CLUSTERS[u.cluster] || {}); });
+} catch (e) {}
+
+function persistCustomUvas() {
+  const custom = Object.values(data).filter(u => u.custom).map(u => ({
+    id: u.id, cluster: u.cluster, cx: u.cx, cy: u.cy,
+    title: u.title, u: u.u, c: u.c, parent: u.parent || null,
+    createdAt: u.createdAt || null, custom: true
+  }));
+  try { localStorage.setItem(LS_CUSTOM, JSON.stringify(custom)); } catch (e) {}
+}
+
+// ============ askClaude bridge with diagnostics ============
+window.lastAskClaudeError = null;
+async function safeAskClaude(prompt) {
+  if (!window.cowork) {
+    window.lastAskClaudeError = 'window.cowork no existe en este entorno';
+    return null;
+  }
+  if (typeof window.cowork.askClaude !== 'function') {
+    window.lastAskClaudeError = 'window.cowork.askClaude no es función (tipo: ' + typeof window.cowork.askClaude + ')';
+    return null;
+  }
+  try {
+    const r = await window.cowork.askClaude(prompt, []);
+    if (typeof r === 'string') { window.lastAskClaudeError = null; return r; }
+    if (r && typeof r === 'object') {
+      if (typeof r.text === 'string') { window.lastAskClaudeError = null; return r.text; }
+      if (typeof r.content === 'string') { window.lastAskClaudeError = null; return r.content; }
+      if (Array.isArray(r.content) && r.content[0]) {
+        if (typeof r.content[0].text === 'string') { window.lastAskClaudeError = null; return r.content[0].text; }
+        if (typeof r.content[0] === 'string') { window.lastAskClaudeError = null; return r.content[0]; }
+      }
+      if (typeof r.response === 'string') { window.lastAskClaudeError = null; return r.response; }
+      if (typeof r.message === 'string') { window.lastAskClaudeError = null; return r.message; }
+      window.lastAskClaudeError = 'respuesta con forma desconocida — keys: ' + Object.keys(r).join(',') + ' | preview: ' + JSON.stringify(r).slice(0, 200);
+      return null;
+    }
+    window.lastAskClaudeError = 'respuesta no-objeto, tipo: ' + typeof r + ' valor: ' + String(r).slice(0, 100);
+    return null;
+  } catch (e) {
+    window.lastAskClaudeError = (e && (e.message || e.name || String(e))) || 'error desconocido';
+    console.error('askClaude error:', e);
+    return null;
+  }
+}
+function askClaudeFallback() {
+  // Friendly message for standalone mode (no Cowork bridge available).
+  // For real debugging, window.lastAskClaudeError holds the technical detail.
+  return '*[Modo standalone]* Aquí aparecería la respuesta de Claude. Para verla generarse en vivo, abre el prototipo dentro de un entorno con conexión al modelo. Las uvas pre-cargadas muestran ejemplos del formato esperado.';
+}
+
+function getChatHistory(id) {
+  try { return JSON.parse(localStorage.getItem(LS_CHAT_PFX + id) || '[]'); }
+  catch (e) { return []; }
+}
+function saveChatHistory(id, h) {
+  try { localStorage.setItem(LS_CHAT_PFX + id, JSON.stringify(h)); } catch (e) {}
+}
+
+function radiusFor(id, isSubbranch) {
+  const base = isSubbranch ? 12 : 18;
+  const h = getChatHistory(id);
+  return Math.min(base + h.length * 0.7, base + 8);
+}
+
+// ============ 3D GRAPE GRADIENTS ============
+
+function lightenColor(hex, factor) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const lighten = (c) => Math.min(255, Math.round(c + (255 - c) * factor));
+  return '#' + [lighten(r), lighten(g), lighten(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+function gradIdFor(clusterName) {
+  return 'grape-grad-' + clusterName.replace(/[^a-zA-Z0-9]/g, '_');
+}
+
+function ensureClusterGradient(clusterName) {
+  const defs = document.getElementById('grape-defs');
+  if (!defs) return null;
+  const id = gradIdFor(clusterName);
+  if (defs.querySelector('#' + id)) return id;
+  const cfg = CLUSTERS[clusterName];
+  if (!cfg) return null;
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const grad = document.createElementNS(SVGNS, 'radialGradient');
+  grad.setAttribute('id', id);
+  grad.setAttribute('cx', '35%');
+  grad.setAttribute('cy', '30%');
+  grad.setAttribute('r', '70%');
+  const stops = [
+    { offset: '0%',  color: lightenColor(cfg.fill, 0.42) },
+    { offset: '55%', color: cfg.fill },
+    { offset: '100%', color: cfg.stroke }
+  ];
+  stops.forEach(s => {
+    const stop = document.createElementNS(SVGNS, 'stop');
+    stop.setAttribute('offset', s.offset);
+    stop.setAttribute('stop-color', s.color);
+    grad.appendChild(stop);
+  });
+  defs.appendChild(grad);
+  return id;
+}
+
+// ============ PARRA (date header) ============
+
+function updateParra() {
+  const today = new Date();
+  const dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const diaName = dias[today.getDay()];
+  const fechaStr = diaName.charAt(0).toUpperCase() + diaName.slice(1) + ' · ' + today.getDate() + ' de ' + meses[today.getMonth()] + ' de ' + today.getFullYear();
+  const el = document.getElementById('parra-date-text');
+  if (el) el.textContent = fechaStr;
+
+  const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
+  const ts = startOfDay.getTime();
+  const todayCount = Object.values(data).filter(u => u.custom && u.createdAt && u.createdAt >= ts).length;
+  const totalCustom = Object.values(data).filter(u => u.custom).length;
+  const right = document.getElementById('parra-right');
+  if (right) {
+    if (todayCount > 0) {
+      right.innerHTML = '<b>' + todayCount + '</b> ' + (todayCount === 1 ? 'uva plantada hoy' : 'uvas plantadas hoy');
+    } else if (totalCustom > 0) {
+      right.innerHTML = '<b>' + totalCustom + '</b> ' + (totalCustom === 1 ? 'uva tuya' : 'uvas tuyas') + ' en la parra';
+    } else {
+      right.textContent = 'Parra fresca · planta tu primera uva';
+    }
+  }
+}
+
+function nextSlotInCluster(cluster) {
+  // Find next free position below the cluster
+  const cfg = CLUSTERS[cluster];
+  const inCluster = Object.values(data).filter(u => u.cluster === cluster && !u.parent);
+  let maxY = cfg.anchorY;
+  inCluster.forEach(u => { if (u.cy > maxY) maxY = u.cy; });
+  const newY = maxY + 32;
+  // alternate slight x offset for natural look
+  const offsets = [0, -22, 22, -11, 11];
+  const usedAtNewY = inCluster.filter(u => Math.abs(u.cy - newY) < 5);
+  if (usedAtNewY.length < 3) {
+    return { cx: cfg.centerX + offsets[usedAtNewY.length], cy: newY };
+  }
+  return { cx: cfg.centerX, cy: newY + 32 };
+}
+
+function nextSubbranchSlot(parentId) {
+  const parent = data[parentId];
+  const siblings = Object.values(data).filter(u => u.parent === parentId);
+  const angles = [-0.6, 0.6, -1.0, 1.0, -1.4, 1.4];
+  const dist = 32;
+  const a = angles[siblings.length % angles.length];
+  return {
+    cx: parent.cx + Math.sin(a) * dist,
+    cy: parent.cy + Math.cos(a) * dist + 6
+  };
+}
+
+// ============ RENDERING ============
+
+const svg = document.getElementById('canvas-svg');
+const grapesLayer = document.getElementById('grapes-layer');
+const stemsLayer = document.getElementById('stems-layer');
+const labelsLayer = document.getElementById('labels-layer');
+const linksLayer = document.getElementById('links-layer');
+const subbranchLayer = document.getElementById('subbranch-layer');
+
+function renderClusterStems() {
+  stemsLayer.innerHTML = '';
+  Object.entries(CLUSTERS).forEach(([name, cfg]) => {
+    const stem = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    stem.setAttribute('d', `M${cfg.stemTop.x} ${cfg.stemTop.y} Q${cfg.stemTop.x-5} ${cfg.stemTop.y+17} ${cfg.centerX} ${cfg.anchorY}`);
+    stem.setAttribute('stroke', '#5F5E5A');
+    stem.setAttribute('stroke-width', '2');
+    stem.setAttribute('fill', 'none');
+    stem.setAttribute('opacity', '0.55');
+    stemsLayer.appendChild(stem);
+    const leaf = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+    leaf.setAttribute('cx', cfg.leaf.x);
+    leaf.setAttribute('cy', cfg.leaf.y);
+    leaf.setAttribute('rx', '11');
+    leaf.setAttribute('ry', '5');
+    leaf.setAttribute('transform', `rotate(-30 ${cfg.leaf.x} ${cfg.leaf.y})`);
+    leaf.setAttribute('fill', '#97C459');
+    leaf.setAttribute('opacity', '0.7');
+    stemsLayer.appendChild(leaf);
+  });
+}
+
+function renderLabels() {
+  labelsLayer.innerHTML = '';
+  Object.entries(CLUSTERS).forEach(([name, cfg]) => {
+    const inCluster = Object.values(data).filter(u => u.cluster === name && !u.parent);
+    let maxY = cfg.anchorY;
+    inCluster.forEach(u => { if (u.cy > maxY) maxY = u.cy; });
+    const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    t.setAttribute('x', cfg.centerX);
+    t.setAttribute('y', maxY + 35);
+    t.setAttribute('class', 'cluster-label');
+    t.textContent = name;
+    labelsLayer.appendChild(t);
+  });
+  // Adjust viewBox if labels go too far down
+  let maxLabelY = 0;
+  labelsLayer.querySelectorAll('text').forEach(t => {
+    const y = parseFloat(t.getAttribute('y'));
+    if (y > maxLabelY) maxLabelY = y;
+  });
+  // Also check all uvas
+  Object.values(data).forEach(u => { if (u.cy + 25 > maxLabelY) maxLabelY = u.cy + 25; });
+  const height = Math.max(460, maxLabelY + 30);
+  svg.setAttribute('viewBox', `0 0 680 ${height}`);
+}
+
+function renderUvas() {
+  grapesLayer.innerHTML = '';
+  Object.values(data).forEach(u => {
+    const gradId = ensureClusterGradient(u.cluster);
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', u.cx);
+    c.setAttribute('cy', u.cy);
+    c.setAttribute('r', radiusFor(u.id, !!u.parent));
+    c.setAttribute('fill', gradId ? 'url(#' + gradId + ')' : u.fill);
+    c.setAttribute('stroke', u.stroke);
+    c.setAttribute('stroke-width', '0.5');
+    c.setAttribute('filter', 'url(#grape-shadow)');
+    c.setAttribute('class', 'grape');
+    c.setAttribute('data-id', u.id);
+    if (u.parent) c.setAttribute('data-parent', u.parent);
+    c.addEventListener('click', () => selectGrape(u.id, true));
+    grapesLayer.appendChild(c);
+  });
+}
+
+function renderSubbranchLines() {
+  subbranchLayer.innerHTML = '';
+  Object.values(data).forEach(u => {
+    if (!u.parent || !data[u.parent]) return;
+    const p = data[u.parent];
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const mx = (p.cx + u.cx) / 2;
+    const my = (p.cy + u.cy) / 2 - 4;
+    path.setAttribute('d', `M${p.cx} ${p.cy} Q${mx} ${my} ${u.cx} ${u.cy}`);
+    path.setAttribute('class', 'subbranch-line');
+    subbranchLayer.appendChild(path);
+  });
+}
+
+function renderLinks() {
+  linksLayer.innerHTML = '';
+  Object.values(data).forEach(u => {
+    if (!u.related || !data[u.related]) return;
+    // Only render each link once (lex order)
+    if (u.id > u.related) return;
+    const r = data[u.related];
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', u.cx);
+    line.setAttribute('y1', u.cy);
+    line.setAttribute('x2', r.cx);
+    line.setAttribute('y2', r.cy);
+    line.setAttribute('class', 'link-line');
+    line.setAttribute('stroke', '#888780');
+    line.setAttribute('stroke-width', '1.2');
+    line.setAttribute('data-pair', [u.id, u.related].sort().join('-'));
+    linksLayer.appendChild(line);
+  });
+}
+
+function renderClusterBar() {
+  const bar = document.getElementById('cluster-bar');
+  bar.innerHTML = '';
+  Object.entries(CLUSTERS).forEach(([name, cfg]) => {
+    const chip = document.createElement('div');
+    chip.className = 'cluster-chip';
+    chip.innerHTML = `
+      <span class="chip-dot" style="background:${cfg.fill}"></span>
+      <span class="chip-name">${name}</span>
+      <button class="chip-btn" data-action="new" data-cluster="${name}" title="Crear nueva uva en este racimo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Uva
+      </button>
+      <button class="chip-btn" data-action="distill" data-cluster="${name}" title="Generar una síntesis cruzada de este racimo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Síntesis
+      </button>
+    `;
+    bar.appendChild(chip);
+  });
+  // "+ Nuevo racimo" chip
+  const addChip = document.createElement('div');
+  addChip.className = 'cluster-chip add-chip';
+  addChip.id = 'add-racimo-chip';
+  addChip.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <span>Nuevo racimo</span>
+  `;
+  bar.appendChild(addChip);
+}
+
+function renderAll() {
+  renderClusterStems();
+  renderUvas();
+  renderSubbranchLines();
+  renderLinks();
+  renderLabels();
+  renderClusterBar();
+  updateParra();
+}
+
+// ============ SELECTION / INTERACTION ============
+
+const dialogEmpty = document.getElementById('dialog-empty');
+const dialogContent = document.getElementById('dialog-content');
+const dialogBadge = document.getElementById('dialog-badge');
+const dialogTitle = document.getElementById('dialog-title');
+const parentLink = document.getElementById('parent-link');
+const msgUser = document.getElementById('msg-user');
+const msgClaude = document.getElementById('msg-claude');
+const notesInput = document.getElementById('notes-input');
+const savedFlash = document.getElementById('saved-flash');
+const chatSim = document.getElementById('chat-sim');
+const chatHistory = document.getElementById('chat-history');
+const chatInput = document.getElementById('chat-input');
+const chatSend = document.getElementById('chat-send');
+const searchInput = document.getElementById('search-input');
+const searchCount = document.getElementById('search-count');
+const searchClear = document.getElementById('search-clear');
+const noMatches = document.getElementById('no-matches');
+let currentId = null;
+let notesSaveTimer = null;
+let isSending = false;
+
+function getGrapes() { return document.querySelectorAll('.grape'); }
+
+// Renders text containing [[term]] markers into a container, with each marked
+// term as a clickable .bif-term span. Falls back to plain text for unmarked text.
+function renderMarkedText(text, container, surroundingContext) {
+  container.innerHTML = '';
+  if (!text) { container.textContent = ''; return; }
+  const re = /\[\[([^\[\]\n]{1,80}?)\]\]/g;
+  let last = 0;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) {
+      container.appendChild(document.createTextNode(text.slice(last, m.index)));
+    }
+    const span = document.createElement('span');
+    span.className = 'bif-term';
+    span.textContent = m[1];
+    span.dataset.term = m[1];
+    span.dataset.context = surroundingContext || text.replace(/\[\[|\]\]/g, '');
+    span.title = 'Bifurcar: profundizar en "' + m[1] + '"';
+    container.appendChild(span);
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) {
+    container.appendChild(document.createTextNode(text.slice(last)));
+  }
+}
+
+function renderChatHistory(id) {
+  const history = getChatHistory(id);
+  chatHistory.innerHTML = '';
+  history.forEach((m, idx) => {
+    const div = document.createElement('div');
+    div.className = 'msg ' + (m.role === 'user' ? 'msg-u' : 'msg-c');
+    if (m.role === 'claude') {
+      renderMarkedText(m.text, div, m.text);
+    } else {
+      div.textContent = m.text;
+    }
+    chatHistory.appendChild(div);
+    if (m.role === 'claude') {
+      const actions = document.createElement('div');
+      actions.className = 'msg-actions';
+      actions.innerHTML = '<button class="msg-bif-btn" data-msg-idx="' + idx + '" title="Crear sub-rama tomando esta respuesta como semilla"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg> Bifurcar desde aquí</button>';
+      chatHistory.appendChild(actions);
+    }
+  });
+}
+
+function selectGrape(id, animate) {
+  const d = data[id];
+  if (!d) return;
+  currentId = id;
+  const grapes = getGrapes();
+  const g = document.querySelector('.grape[data-id="' + id + '"]');
+
+  grapes.forEach(x => x.classList.remove('selected', 'related', 'dimmed'));
+  document.querySelectorAll('.link-line').forEach(l => l.classList.remove('active'));
+  if (g) g.classList.add('selected');
+  grapes.forEach(x => { if (x !== g && !x.classList.contains('search-hidden')) x.classList.add('dimmed'); });
+
+  if (d.related) {
+    const rel = document.querySelector('.grape[data-id="' + d.related + '"]');
+    if (rel) { rel.classList.remove('dimmed'); rel.classList.add('related'); }
+    const pair = [d.id, d.related].sort().join('-');
+    const lk = document.querySelector('.link-line[data-pair="' + pair + '"]');
+    if (lk) lk.classList.add('active');
+  }
+
+  dialogEmpty.style.display = 'none';
+  dialogContent.style.display = 'block';
+  dialogBadge.style.background = d.badge;
+  dialogBadge.style.color = d.textColor;
+  dialogBadge.textContent = d.cluster;
+  dialogTitle.textContent = d.title;
+
+  if (d.parent && data[d.parent]) {
+    parentLink.style.display = 'inline-flex';
+    parentLink.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg> sub-rama de "${data[d.parent].title}"`;
+    parentLink.onclick = () => selectGrape(d.parent, true);
+  } else {
+    parentLink.style.display = 'none';
+  }
+
+  msgUser.textContent = d.u || '(sin pregunta inicial)';
+  if (d.c) {
+    renderMarkedText(d.c, msgClaude, d.c);
+  } else {
+    msgClaude.textContent = '(esperando primera respuesta)';
+  }
+
+  renderChatHistory(id);
+  chatInput.value = '';
+  notesInput.value = localStorage.getItem(LS_NOTES_PFX + id) || '';
+
+  try { localStorage.setItem(LS_SELECTED, id); } catch (e) {}
+
+  if (animate) {
+    chatSim.style.display = 'none';
+    try { localStorage.removeItem(LS_SIM_OPEN); } catch (e) {}
+  }
+}
+
+function showSimForCurrent() {
+  if (!currentId) return;
+  const d = data[currentId];
+  document.getElementById('uc-stripe').style.background = d.stripe;
+  document.getElementById('uc-cluster').textContent = d.cluster + ' · ' + d.title.toLowerCase();
+  document.getElementById('uc-title').textContent = d.title;
+  document.getElementById('uc-snippet').textContent = d.c || '(uva sin contenido inicial)';
+
+  const responseText = document.getElementById('response-text');
+  const ccWrap = document.getElementById('claude-card-wrap');
+  if (d.related && data[d.related]) {
+    const r = data[d.related];
+    responseText.textContent = 'Claro. Tomando lo que conversamos en "' + d.title + '", te sugiero retomar la idea principal. Por cierto, esto se conecta con otra uva de tu racimo:';
+    document.getElementById('cc-stripe').style.background = r.stripe;
+    document.getElementById('cc-cluster').textContent = r.cluster;
+    document.getElementById('cc-title').textContent = r.title;
+    document.getElementById('cc-snippet').textContent = r.c || '';
+    ccWrap.style.display = 'block';
+  } else {
+    responseText.textContent = 'Claro, retomemos. Sobre lo que cerramos en "' + d.title + '", podemos avanzar revisando lo que ya definimos.';
+    ccWrap.style.display = 'none';
+  }
+  chatSim.style.display = 'block';
+  try { localStorage.setItem(LS_SIM_OPEN, currentId); } catch (e) {}
+}
+
+async function callClaudeForReply(d, history, newUserMessage) {
+  const lines = [
+    'Eres Claude. Continúas una conversación previa con el usuario sobre: "' + d.title + '" (categoría: ' + d.cluster + ').'
+  ];
+  if (d.parent && data[d.parent]) {
+    const parent = data[d.parent];
+    lines.push('Esta uva es una sub-rama de "' + parent.title + '". Hereda este contexto:');
+    lines.push('  Pregunta original: ' + parent.u);
+    lines.push('  Respuesta original: ' + parent.c);
+    getChatHistory(parent.id).forEach(m => {
+      lines.push('  ' + (m.role === 'user' ? 'Usuario' : 'Tú') + ': ' + m.text);
+    });
+    lines.push('');
+  }
+  if (d.u) lines.push('Mensaje inicial del usuario en esta uva: ' + d.u);
+  if (d.c) lines.push('Tu respuesta inicial: ' + d.c);
+  history.forEach(m => { lines.push((m.role === 'user' ? 'Usuario: ' : 'Tú: ') + m.text); });
+  lines.push('');
+  lines.push('Nuevo mensaje del usuario: ' + newUserMessage);
+  lines.push('');
+  lines.push('Responde de forma natural y breve (2-4 frases) en español, manteniendo el tono. No saludes ni te presentes — solo continúa.');
+  lines.push('IMPORTANTE: Marca con dobles corchetes [[así]] entre 2 y 5 conceptos, términos, nombres propios o ideas compactas dentro de tu respuesta que el usuario podría querer explorar en mayor profundidad. No fuerces: marca solo lo que genuinamente tenga sustancia detrás. Si tu respuesta es trivial o no contiene nada bifurcable, no marques nada. No marques palabras vacías ni conectores. No anides corchetes.');
+  const prompt = lines.join('\n');
+  return await safeAskClaude(prompt);
+}
+
+async function sendChatMessage() {
+  if (isSending || !currentId) return;
+  const text = chatInput.value.trim();
+  if (!text) return;
+  isSending = true;
+  chatSend.disabled = true;
+
+  const d = data[currentId];
+  const history = getChatHistory(currentId);
+
+  history.push({ role: 'user', text: text });
+  saveChatHistory(currentId, history);
+  renderChatHistory(currentId);
+  chatInput.value = '';
+  // Update size live
+  const c = document.querySelector('.grape[data-id="' + currentId + '"]');
+  if (c) c.setAttribute('r', radiusFor(currentId, !!d.parent));
+
+  const thinking = document.createElement('div');
+  thinking.className = 'thinking';
+  thinking.innerHTML = '<span class="thinking-dot"></span><span class="thinking-dot"></span><span class="thinking-dot"></span>';
+  chatHistory.appendChild(thinking);
+
+  const reply = await callClaudeForReply(d, history.slice(0, -1), text);
+  thinking.remove();
+
+  const replyText = reply || askClaudeFallback();
+  history.push({ role: 'claude', text: replyText });
+  saveChatHistory(currentId, history);
+  renderChatHistory(currentId);
+
+  if (c) c.setAttribute('r', radiusFor(currentId, !!d.parent));
+
+  isSending = false;
+  chatSend.disabled = false;
+  chatInput.focus();
+}
+
+function runSearch(query) {
+  const q = query.trim().toLowerCase();
+  const grapes = getGrapes();
+  if (!q) {
+    grapes.forEach(g => g.classList.remove('search-match', 'search-hidden'));
+    searchCount.style.display = 'none';
+    searchClear.classList.remove('show');
+    noMatches.classList.remove('show');
+    return;
+  }
+  searchClear.classList.add('show');
+  let matches = 0;
+  grapes.forEach(g => {
+    const id = g.dataset.id;
+    const d = data[id];
+    if (!d) return;
+    const hay = (d.title + ' ' + (d.u || '') + ' ' + (d.c || '') + ' ' + d.cluster).toLowerCase();
+    if (hay.includes(q)) {
+      g.classList.add('search-match');
+      g.classList.remove('search-hidden', 'dimmed');
+      matches++;
+    } else {
+      g.classList.add('search-hidden');
+      g.classList.remove('search-match', 'dimmed', 'related');
+    }
+  });
+  searchCount.textContent = matches + (matches === 1 ? ' uva' : ' uvas');
+  searchCount.style.display = 'inline';
+  noMatches.classList.toggle('show', matches === 0);
+}
+
+// ============ MODALS: NEW UVA, BIFURCAR, DISTILL ============
+
+const modalNew = document.getElementById('modal-new');
+const modalBif = document.getElementById('modal-bifurcar');
+const modalDistill = document.getElementById('modal-distill');
+
+let pendingNewCluster = null;
+
+function openNewUvaModal(cluster) {
+  pendingNewCluster = cluster;
+  document.getElementById('new-cluster-name').textContent = cluster;
+  document.getElementById('new-uva-title').value = '';
+  document.getElementById('new-uva-question').value = '';
+  modalNew.classList.add('show');
+  setTimeout(() => document.getElementById('new-uva-title').focus(), 50);
+}
+function closeNewUvaModal() { modalNew.classList.remove('show'); }
+
+let pendingBifSeed = null;
+
+// ============ NEW RACIMO ============
+
+const modalNewRacimo = document.getElementById('modal-new-racimo');
+let pendingPaletteIdx = 0;
+
+function nextAvailableColorIdx() {
+  const usedColors = Object.values(CLUSTERS).filter(c => c.custom).length;
+  return usedColors % PALETTE.length;
+}
+
+function renderColorPalette() {
+  const wrap = document.getElementById('nr-palette');
+  wrap.innerHTML = '';
+  PALETTE.forEach((p, i) => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (i === pendingPaletteIdx ? ' selected' : '');
+    sw.style.background = p.fill;
+    sw.title = p.name;
+    sw.addEventListener('click', () => {
+      pendingPaletteIdx = i;
+      renderColorPalette();
+    });
+    wrap.appendChild(sw);
+  });
+}
+
+function openNewRacimoModal() {
+  document.getElementById('nr-name').value = '';
+  pendingPaletteIdx = nextAvailableColorIdx();
+  renderColorPalette();
+  modalNewRacimo.classList.add('show');
+  setTimeout(() => document.getElementById('nr-name').focus(), 50);
+}
+function closeNewRacimoModal() { modalNewRacimo.classList.remove('show'); }
+
+function createNewRacimo() {
+  const name = document.getElementById('nr-name').value.trim();
+  if (!name) return;
+  if (CLUSTERS[name]) {
+    alert('Ya existe un racimo con ese nombre.');
+    return;
+  }
+  const customCount = Object.values(CLUSTERS).filter(c => c.custom).length;
+  const slot = nextRacimoSlot(customCount);
+  const palette = PALETTE[pendingPaletteIdx];
+  CLUSTERS[name] = Object.assign({}, palette, {
+    centerX: slot.centerX,
+    anchorY: slot.anchorY,
+    stemTop: { x: slot.centerX, y: slot.anchorY - 30 },
+    leaf: { x: slot.centerX - 15, y: slot.anchorY - 23 },
+    custom: true
+  });
+  persistCustomClusters();
+  closeNewRacimoModal();
+  renderAll();
+  // Smoothly scroll the canvas so the new racimo is visible
+  setTimeout(() => {
+    const canvas = document.querySelector('.canvas-area');
+    if (canvas) canvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 50);
+}
+
+function openBifurcarModal(seed) {
+  if (!currentId) return;
+  pendingBifSeed = seed || null;
+  document.getElementById('bif-parent-title').textContent = data[currentId].title;
+  document.getElementById('bif-title').value = '';
+  document.getElementById('bif-question').value = '';
+  const seedWrap = document.getElementById('bif-seed-wrap');
+  if (pendingBifSeed) {
+    document.getElementById('bif-seed').textContent = pendingBifSeed;
+    seedWrap.style.display = 'block';
+  } else {
+    seedWrap.style.display = 'none';
+  }
+  modalBif.classList.add('show');
+  setTimeout(() => document.getElementById('bif-title').focus(), 50);
+}
+function closeBifurcarModal() { modalBif.classList.remove('show'); }
+
+function freshId(prefix) {
+  return prefix + '_' + Date.now().toString(36) + Math.floor(Math.random() * 1000).toString(36);
+}
+
+async function createNewUva() {
+  const title = document.getElementById('new-uva-title').value.trim();
+  const question = document.getElementById('new-uva-question').value.trim();
+  if (!title || !question || !pendingNewCluster) return;
+
+  const cfg = CLUSTERS[pendingNewCluster];
+  const pos = nextSlotInCluster(pendingNewCluster);
+  const id = freshId('u');
+
+  const newUva = {
+    id, cluster: pendingNewCluster, cx: pos.cx, cy: pos.cy,
+    title, u: question, c: 'Pensando...', custom: true, createdAt: Date.now()
+  };
+  data[id] = Object.assign({}, newUva, cfg);
+  persistCustomUvas();
+  renderAll();
+  closeNewUvaModal();
+  selectGrape(id, true);
+
+  // Ask Claude for the initial response
+  const prompt = `Eres Claude. Un usuario empezó una conversación nueva con título "${title}" en la categoría "${pendingNewCluster}".\n\nSu primera pregunta: ${question}\n\nResponde de forma útil y natural (2-4 frases) en español. Empieza directamente, sin saludo.\n\nIMPORTANTE: Marca con dobles corchetes [[así]] entre 2 y 5 conceptos, términos, nombres propios o ideas compactas dentro de tu respuesta que el usuario podría querer explorar en mayor profundidad. No fuerces: marca solo lo que tenga sustancia. No anides corchetes.`;
+  const reply = await safeAskClaude(prompt);
+  data[id].c = reply || askClaudeFallback();
+  persistCustomUvas();
+  if (currentId === id) {
+    renderMarkedText(data[id].c, msgClaude, data[id].c);
+  }
+}
+
+async function createSubbranch() {
+  const title = document.getElementById('bif-title').value.trim();
+  const question = document.getElementById('bif-question').value.trim();
+  if (!title || !question || !currentId) return;
+  const parent = data[currentId];
+  const cfg = CLUSTERS[parent.cluster];
+  const pos = nextSubbranchSlot(currentId);
+  const id = freshId('s');
+  const newUva = {
+    id, cluster: parent.cluster, cx: pos.cx, cy: pos.cy,
+    title, u: question, c: 'Pensando...', parent: currentId,
+    custom: true, createdAt: Date.now()
+  };
+  data[id] = Object.assign({}, newUva, cfg);
+  persistCustomUvas();
+  renderAll();
+  closeBifurcarModal();
+  selectGrape(id, true);
+
+  // For sub-rama, pass full parent context
+  const parentHist = getChatHistory(parent.id);
+  const ctxLines = [
+    `Eres Claude. El usuario está bifurcando una conversación previa para explorar una tangente.`,
+    `Conversación original (uva madre, título "${parent.title}", categoría ${parent.cluster}):`,
+    `  Usuario: ${parent.u}`,
+    `  Tú: ${parent.c}`
+  ];
+  parentHist.forEach(m => { ctxLines.push(`  ${m.role === 'user' ? 'Usuario' : 'Tú'}: ${m.text}`); });
+  if (pendingBifSeed) {
+    ctxLines.push('');
+    ctxLines.push(`Punto de partida específico: el usuario quiere bifurcar a partir de esta respuesta tuya en concreto:`);
+    ctxLines.push(`  "${pendingBifSeed}"`);
+  }
+  ctxLines.push('');
+  ctxLines.push(`La nueva sub-rama se titula "${title}". El usuario pregunta:`);
+  ctxLines.push(question);
+  ctxLines.push('');
+  ctxLines.push('Responde de forma natural y útil (2-4 frases) en español, llevándote el contexto previo pero enfocándote en lo nuevo. No saludes.');
+  ctxLines.push('IMPORTANTE: Marca con dobles corchetes [[así]] entre 2 y 5 conceptos, términos o ideas compactas que el usuario podría querer explorar en sub-ramas posteriores. Marca solo lo que tenga sustancia detrás. No anides corchetes.');
+  const prompt = ctxLines.join('\n');
+  const reply = await safeAskClaude(prompt);
+  data[id].c = reply || askClaudeFallback();
+  persistCustomUvas();
+  if (currentId === id) {
+    renderMarkedText(data[id].c, msgClaude, data[id].c);
+  }
+}
+
+let currentSynthesis = null; // { cluster, date, body, uvaCount }
+
+function formatDate(d) {
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return d.getDate() + ' de ' + meses[d.getMonth()] + ' de ' + d.getFullYear();
+}
+
+async function distillCluster(cluster) {
+  modalDistill.classList.add('show');
+  const inCluster = Object.values(data).filter(u => u.cluster === cluster);
+  document.getElementById('distill-cluster-name').textContent = 'Síntesis del racimo: ' + cluster;
+  document.getElementById('distill-meta').textContent = formatDate(new Date()) + ' · ' + inCluster.length + ' conversaciones';
+  const body = document.getElementById('distill-body');
+  body.textContent = 'Generando síntesis cruzada...';
+  document.getElementById('distill-download').disabled = true;
+  document.getElementById('distill-copy').disabled = true;
+
+  const lines = ['Eres Claude. Tengo un racimo de ' + inCluster.length + ' conversaciones agrupadas bajo "' + cluster + '". Aquí están:', ''];
+  inCluster.forEach((u, i) => {
+    lines.push((i+1) + '. "' + u.title + '"' + (u.parent ? ' (sub-rama de "' + (data[u.parent]?.title || u.parent) + '")' : ''));
+    if (u.u) lines.push('  Pregunta: ' + u.u);
+    if (u.c) lines.push('  Respuesta: ' + u.c.replace(/\[\[|\]\]/g, ''));
+    getChatHistory(u.id).forEach(m => {
+      lines.push('  ' + (m.role === 'user' ? 'Usuario' : 'Tú') + ': ' + m.text.replace(/\[\[|\]\]/g, ''));
+    });
+    lines.push('');
+  });
+  lines.push('Genera una síntesis cruzada de este racimo en español, de 220-300 palabras, con esta estructura exacta (usa los encabezados en negrita con asteriscos dobles):');
+  lines.push('');
+  lines.push('**Temas dominantes**');
+  lines.push('Un párrafo (3-4 frases) que describa qué temas recorren el racimo y qué preocupaciones lo atraviesan.');
+  lines.push('');
+  lines.push('**Decisiones e ideas clave**');
+  lines.push('3-5 viñetas cortas (cada una empieza con "—") con las decisiones, hallazgos o aprendizajes más importantes que emergieron.');
+  lines.push('');
+  lines.push('**Preguntas abiertas**');
+  lines.push('Un párrafo corto (2-3 frases) sobre qué queda por resolver, qué conexión inesperada entre conversaciones vale la pena nombrar, o qué siguiente paso se sugiere.');
+  lines.push('');
+  lines.push('Tono: claro y directo. Sin marcar conceptos con corchetes.');
+  const prompt = lines.join('\n');
+  const reply = await safeAskClaude(prompt);
+  let synthText = reply;
+  let isFallback = false;
+  if (!synthText) {
+    if (DEMO_SYNTHESES[cluster]) {
+      synthText = DEMO_SYNTHESES[cluster];
+      isFallback = true;
+    } else {
+      synthText = '*[Modo standalone]* La síntesis en vivo no está disponible en este entorno. Las uvas pre-cargadas en los racimos Trabajo, Personal y Aprendizaje muestran una síntesis pre-generada que ilustra el formato.';
+    }
+  }
+  body.innerHTML = '';
+  if (isFallback) {
+    const note = document.createElement('div');
+    note.style.cssText = 'font-size: 11px; color: #5F5E5A; font-style: italic; margin-bottom: 12px; padding: 8px 10px; background: #FAFAF7; border-radius: 6px; border-left: 2px solid #B4B2A9; line-height: 1.5;';
+    note.textContent = 'Síntesis pre-cargada para modo standalone. En live mode, este texto se genera dinámicamente desde el contenido completo del racimo.';
+    body.appendChild(note);
+  }
+  synthText.split(/\n/).forEach(line => {
+    const div = document.createElement('div');
+    div.innerHTML = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    body.appendChild(div);
+  });
+
+  currentSynthesis = {
+    cluster: cluster,
+    date: new Date().toISOString(),
+    dateStr: formatDate(new Date()),
+    body: synthText,
+    uvaCount: inCluster.length
+  };
+  document.getElementById('distill-download').disabled = false;
+  document.getElementById('distill-copy').disabled = false;
+}
+
+function synthesisAsMarkdown(s) {
+  const lines = [
+    '# Síntesis del racimo: ' + s.cluster,
+    '',
+    '*' + s.dateStr + ' — ' + s.uvaCount + ' conversaciones*',
+    '',
+    s.body
+  ];
+  return lines.join('\n');
+}
+
+function downloadCurrentSynthesis() {
+  if (!currentSynthesis) return;
+  const md = synthesisAsMarkdown(currentSynthesis);
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'sintesis-' + currentSynthesis.cluster.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + currentSynthesis.date.slice(0, 10) + '.md';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+}
+
+async function copyCurrentSynthesis() {
+  if (!currentSynthesis) return;
+  try { await navigator.clipboard.writeText(synthesisAsMarkdown(currentSynthesis)); } catch (e) {}
+}
+
+// ============ EVENT BINDINGS ============
+
+document.getElementById('dialog-ref').addEventListener('click', showSimForCurrent);
+document.getElementById('dialog-bifurcar').addEventListener('click', () => openBifurcarModal(null));
+
+document.getElementById('msg-claude-bif').addEventListener('click', () => {
+  if (!currentId) return;
+  const seed = (data[currentId] && data[currentId].c) || '';
+  openBifurcarModal(seed);
+});
+
+chatHistory.addEventListener('click', (e) => {
+  const btn = e.target.closest('.msg-bif-btn');
+  if (!btn || !currentId) return;
+  const idx = parseInt(btn.dataset.msgIdx, 10);
+  const hist = getChatHistory(currentId);
+  const seed = hist[idx] ? hist[idx].text : '';
+  openBifurcarModal(seed);
+});
+
+// Global click handler for [[term]] bifurcation markers
+document.body.addEventListener('click', (e) => {
+  if (document.body.classList.contains('marks-hidden')) return;
+  const term = e.target.closest('.bif-term');
+  if (!term || !currentId) return;
+  const t = term.dataset.term || term.textContent;
+  const ctx = term.dataset.context || '';
+  openBifurcarModal(ctx);
+  document.getElementById('bif-title').value = t;
+  document.getElementById('bif-question').value = 'Profundiza en "' + t + '". ¿Qué es, por qué importa, y qué debería saber primero?';
+  setTimeout(() => document.getElementById('bif-question').focus(), 60);
+});
+
+// ============ MANUAL SELECTION → BIFURCATE ============
+
+const selectionBtn = document.createElement('button');
+selectionBtn.id = 'selection-bif-btn';
+selectionBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg> Bifurcar selección';
+document.body.appendChild(selectionBtn);
+let pendingSelection = null;
+
+function hideSelectionBtn() {
+  selectionBtn.classList.remove('show');
+  pendingSelection = null;
+}
+
+function isInsideClaudeResponse(node) {
+  if (!node) return false;
+  const el = node.nodeType === 3 ? node.parentElement : node;
+  if (!el) return false;
+  if (el.closest('#msg-claude')) return true;
+  const msg = el.closest('.msg');
+  if (msg && msg.classList.contains('msg-c') && msg.closest('#chat-history')) return true;
+  return false;
+}
+
+document.addEventListener('selectionchange', () => {
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed || sel.rangeCount === 0) { hideSelectionBtn(); return; }
+  const text = sel.toString().trim();
+  if (!text || text.length < 3) { hideSelectionBtn(); return; }
+  const range = sel.getRangeAt(0);
+  if (!isInsideClaudeResponse(range.commonAncestorContainer)) { hideSelectionBtn(); return; }
+  const rect = range.getBoundingClientRect();
+  if (rect.width === 0 && rect.height === 0) { hideSelectionBtn(); return; }
+  pendingSelection = text;
+  selectionBtn.classList.add('show');
+  const btnWidth = 160;
+  let left = rect.left + (rect.width / 2) - (btnWidth / 2);
+  left = Math.max(8, Math.min(left, window.innerWidth - btnWidth - 8));
+  let top = rect.bottom + 8;
+  if (top + 36 > window.innerHeight) top = rect.top - 36;
+  selectionBtn.style.left = left + 'px';
+  selectionBtn.style.top = top + 'px';
+});
+
+selectionBtn.addEventListener('mousedown', (e) => e.preventDefault());
+
+selectionBtn.addEventListener('click', () => {
+  if (!pendingSelection || !currentId) return;
+  const text = pendingSelection;
+  const title = text.length > 60 ? text.slice(0, 57).trim() + '…' : text;
+  hideSelectionBtn();
+  openBifurcarModal(text);
+  document.getElementById('bif-title').value = title;
+  document.getElementById('bif-question').value = 'Profundiza en este fragmento que destaqué: "' + text + '". ¿Qué hay detrás?';
+  setTimeout(() => document.getElementById('bif-question').focus(), 60);
+});
+
+document.addEventListener('mousedown', (e) => {
+  if (e.target.closest('#selection-bif-btn')) return;
+  if (e.target.closest('#msg-claude') || e.target.closest('#chat-history')) return;
+  hideSelectionBtn();
+});
+
+window.addEventListener('scroll', hideSelectionBtn, true);
+window.addEventListener('resize', hideSelectionBtn);
+
+// ============ MARKS VISIBILITY TOGGLE ============
+
+const LS_SHOW_MARKS = 'racimo_show_marks_v1';
+let showMarks = (function() {
+  try { return localStorage.getItem(LS_SHOW_MARKS) !== 'false'; }
+  catch (e) { return true; }
+})();
+
+const marksToggle = document.getElementById('marks-toggle');
+const eyeOn = document.getElementById('eye-on');
+const eyeOff = document.getElementById('eye-off');
+const marksLabel = document.getElementById('marks-toggle-label');
+
+function applyMarksState() {
+  document.body.classList.toggle('marks-hidden', !showMarks);
+  marksToggle.classList.toggle('is-off', !showMarks);
+  eyeOn.style.display = showMarks ? 'inline-block' : 'none';
+  eyeOff.style.display = showMarks ? 'none' : 'inline-block';
+  marksLabel.textContent = showMarks ? 'Resaltados' : 'Lectura limpia';
+  marksToggle.title = showMarks
+    ? 'Ocultar los conceptos resaltados (modo lectura limpia)'
+    : 'Volver a mostrar los conceptos resaltados';
+}
+applyMarksState();
+
+marksToggle.addEventListener('click', () => {
+  showMarks = !showMarks;
+  try { localStorage.setItem(LS_SHOW_MARKS, showMarks ? 'true' : 'false'); } catch (e) {}
+  applyMarksState();
+});
+
+document.getElementById('cluster-bar').addEventListener('click', (e) => {
+  if (e.target.closest('#add-racimo-chip')) { openNewRacimoModal(); return; }
+  const btn = e.target.closest('.chip-btn');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const cluster = btn.dataset.cluster;
+  if (action === 'new') openNewUvaModal(cluster);
+  else if (action === 'distill') distillCluster(cluster);
+});
+
+document.getElementById('new-cancel').addEventListener('click', closeNewUvaModal);
+document.getElementById('new-create').addEventListener('click', createNewUva);
+document.getElementById('bif-cancel').addEventListener('click', closeBifurcarModal);
+document.getElementById('bif-create').addEventListener('click', createSubbranch);
+document.getElementById('nr-cancel').addEventListener('click', closeNewRacimoModal);
+document.getElementById('nr-create').addEventListener('click', createNewRacimo);
+document.getElementById('nr-name').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); createNewRacimo(); }
+});
+document.getElementById('distill-close').addEventListener('click', () => modalDistill.classList.remove('show'));
+document.getElementById('distill-copy').addEventListener('click', copyCurrentSynthesis);
+document.getElementById('distill-download').addEventListener('click', downloadCurrentSynthesis);
+
+chatSend.addEventListener('click', sendChatMessage);
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
+});
+
+searchInput.addEventListener('input', (e) => runSearch(e.target.value));
+searchClear.addEventListener('click', () => { searchInput.value = ''; runSearch(''); searchInput.focus(); });
+
+notesInput.addEventListener('input', () => {
+  if (!currentId) return;
+  clearTimeout(notesSaveTimer);
+  notesSaveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(LS_NOTES_PFX + currentId, notesInput.value);
+      savedFlash.classList.add('show');
+      setTimeout(() => savedFlash.classList.remove('show'), 1200);
+    } catch (e) {}
+  }, 400);
+});
+
+[modalNew, modalBif, modalDistill, modalNewRacimo].forEach(m => {
+  m.addEventListener('click', (e) => {
+    if (e.target === m) m.classList.remove('show');
+  });
+});
+
+// ============ BOOT ============
+
+renderAll();
+
+window.addEventListener('DOMContentLoaded', () => {
+  let lastId = null;
+  try { lastId = localStorage.getItem(LS_SELECTED); } catch (e) {}
+  if (lastId && data[lastId]) {
+    selectGrape(lastId, false);
+    let simOpen = null;
+    try { simOpen = localStorage.getItem(LS_SIM_OPEN); } catch (e) {}
+    if (simOpen === lastId) showSimForCurrent();
+  }
+});
+</script>
+</body>
+</html>
