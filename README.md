@@ -1,6 +1,6 @@
 # Racimo
 
-🍇 [Live demo](https://PGreyesM.github.io/racimo/) · [Read the manifesto](manifesto.md)
+🍇 [Live demo](https://pgreyesm.github.io/racimo/) · [Read the manifesto](manifesto.md)
 
 A UX proposal for conversations with Claude. Three integrated ideas:
 
