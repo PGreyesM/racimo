@@ -16,7 +16,7 @@ body {
   line-height: 1.5;
 }
 .container { max-width: 760px; margin: 0 auto; padding: 20px 16px 40px; }
-.proposal-header { margin: 0 0 20px; padding-bottom: 18px; border-bottom: 0.5px solid rgba(0,0,0,0.1); }
+.proposal-header { margin: 0 0 20px; padding-bottom: 18px; padding-right: 90px; border-bottom: 0.5px solid rgba(0,0,0,0.1); position: relative; }
 .proposal-title { font-size: 24px; font-weight: 500; margin: 0 0 4px; color: #1A1A19; letter-spacing: -0.2px; }
 .proposal-subtitle { font-size: 14px; color: #5F5E5A; margin: 0 0 14px; }
 .proposal-abstract { font-size: 13px; color: #444441; line-height: 1.6; margin: 0; max-width: 640px; }
@@ -320,6 +320,39 @@ body.marks-hidden .bif-term::after { display: none; }
 .marks-toggle:hover { color: #1A1A19; background: #F1EFE8; }
 .marks-toggle.is-off { color: #534AB7; }
 .marks-toggle svg { width: 14px; height: 14px; }
+
+#lang-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #EEEDFE;
+  color: #534AB7;
+  border: 0.5px solid #7F77DD;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background .15s, border-color .15s, color .15s;
+  flex-shrink: 0;
+}
+#lang-toggle:hover { background: #CECBF6; color: #3C3489; border-color: #534AB7; }
+#lang-toggle:active { transform: scale(0.97); }
+#lang-toggle svg { width: 14px; height: 14px; color: #7F77DD; }
+#lang-toggle:hover svg { color: #3C3489; }
+#lang-toggle span { line-height: 1; }
+
+@media (max-width: 640px) {
+  #lang-toggle { padding: 5px 9px; font-size: 11px; gap: 4px; }
+  #lang-toggle svg { width: 13px; height: 13px; }
+  .proposal-header { padding-right: 70px; }
+}
 
 .cluster-chip.add-chip {
   background: transparent;
@@ -625,23 +658,27 @@ body.marks-hidden .bif-term::after { display: none; }
 <div class="container">
 
 <div class="proposal-header">
-  <h1 class="proposal-title">Racimo de Conversaciones</h1>
-  <p class="proposal-subtitle">Una propuesta de navegación espacial para conversaciones con LLMs</p>
-  <p class="proposal-abstract">Tres ideas integradas: (1) las conversaciones viven como uvas agrupadas en racimos por tema, no como un scroll lineal; (2) cualquier respuesta puede bifurcarse en una sub-rama que hereda todo el contexto del padre; (3) la destilación de un racimo es un output de primera clase, descargable y persistente. Demo navegable a continuación.</p>
+  <button id="lang-toggle" title="Switch language">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    <span id="lang-toggle-label">EN</span>
+  </button>
+  <h1 class="proposal-title" data-i18n="proposalTitle">Racimo de Conversaciones</h1>
+  <p class="proposal-subtitle" data-i18n="proposalSubtitle">Una propuesta de navegación espacial para conversaciones con LLMs</p>
+  <p class="proposal-abstract" data-i18n="proposalAbstract">Tres ideas integradas: (1) las conversaciones viven como uvas agrupadas en racimos por tema, no como un scroll lineal; (2) cualquier respuesta puede bifurcarse en una sub-rama que hereda todo el contexto del padre; (3) la destilación de un racimo es un output de primera clase, descargable y persistente. Demo navegable a continuación.</p>
 </div>
 <div class="how-to-use">
-  <p class="intro-header">Tres acciones para explorar la idea:</p>
+  <p class="intro-header" data-i18n="introHeader">Tres acciones para explorar la idea:</p>
   <ol class="how-to-list">
-    <li><strong>Pincha cualquier uva</strong> para abrir su conversación. Cada uva es un chat con Claude sobre un tema concreto.</li>
-    <li><strong>Pincha una palabra <span class="intro-resaltado">resaltada</span></strong> dentro de una respuesta — o selecciona cualquier fragmento de texto — para bifurcar una sub-rama que hereda el contexto del padre.</li>
-    <li><strong>Pulsa "Síntesis"</strong> sobre un racimo (en la barra de chips arriba del lienzo) para destilar todas sus uvas en un texto cuidado y descargable.</li>
+    <li data-i18n="introItem1"><strong>Pincha cualquier uva</strong> para abrir su conversación. Cada uva es un chat con Claude sobre un tema concreto.</li>
+    <li data-i18n="introItem2"><strong>Pincha una palabra <span class="intro-resaltado">resaltada</span></strong> dentro de una respuesta — o selecciona cualquier fragmento de texto — para bifurcar una sub-rama que hereda el contexto del padre.</li>
+    <li data-i18n="introItem3"><strong>Pulsa "Síntesis"</strong> sobre un racimo (en la barra de chips arriba del lienzo) para destilar todas sus uvas en un texto cuidado y descargable.</li>
   </ol>
-  <p class="intro-foot">El icono del ojo en el buscador apaga los resaltados si prefieres leer en limpio. Tu progreso se guarda en este navegador.</p>
+  <p class="intro-foot" data-i18n="introFoot">El icono del ojo en el buscador apaga los resaltados si prefieres leer en limpio. Tu progreso se guarda en este navegador.</p>
 </div>
 
 <div class="search-bar">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-  <input type="text" id="search-input" placeholder="Buscar por título, pregunta o respuesta..." autocomplete="off">
+  <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Buscar por título, pregunta o respuesta..." autocomplete="off">
   <span class="search-count" id="search-count" style="display:none;"></span>
   <button class="search-clear" id="search-clear" title="Limpiar búsqueda">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -669,13 +706,13 @@ body.marks-hidden .bif-term::after { display: none; }
   <g id="grapes-layer"></g>
   <g id="labels-layer"></g>
 </svg>
-<div class="no-matches" id="no-matches">Ninguna uva coincide con tu búsqueda.</div>
+<div class="no-matches" id="no-matches" data-i18n="noMatches">Ninguna uva coincide con tu búsqueda.</div>
 </div>
 
 <div class="dialog">
   <div class="dialog-empty" id="dialog-empty">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.92 3.5a8.5 8.5 0 1 1-3.42 12.5"/><path d="M3 12l5-5"/><path d="M3 12l5 5"/></svg>
-    <span>Pincha cualquier uva del lienzo de arriba para abrir su conversación. Las respuestas con palabras resaltadas se pueden bifurcar.</span>
+    <span data-i18n="dialogEmpty">Pincha cualquier uva del lienzo de arriba para abrir su conversación. Las respuestas con palabras resaltadas se pueden bifurcar.</span>
   </div>
   <div id="dialog-content" style="display: none;">
     <div class="dialog-header">
@@ -685,31 +722,31 @@ body.marks-hidden .bif-term::after { display: none; }
         <span class="parent-link" id="parent-link" style="display:none;"></span>
       </div>
       <div class="dh-right">
-        <button class="btn" id="dialog-bifurcar" title="Bifurca una sub-rama desde esta uva, llevándose todo el contexto">
+        <button class="btn" id="dialog-bifurcar" data-i18n-title="bifBtnTitle" title="Bifurca una sub-rama desde esta uva, llevándose todo el contexto">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg>
-          Bifurcar
+          <span data-i18n="btnBifurcate">Bifurcar</span>
         </button>
         <button class="btn" id="dialog-ref">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11 6l.463-.536a5 5 0 1 1 7.072 7.072L18 13"/><path d="M13 18l-.5.5a5 5 0 1 1-7-7L6 11"/></svg>
-          Citar
+          <span data-i18n="btnCite">Citar</span>
         </button>
       </div>
     </div>
     <div class="msg msg-u" id="msg-user"></div>
     <div class="msg msg-c" id="msg-claude"></div>
     <div class="msg-actions">
-      <button class="msg-bif-btn" id="msg-claude-bif" title="Crear sub-rama tomando esta respuesta como contexto inicial">
+      <button class="msg-bif-btn" id="msg-claude-bif" data-i18n-title="btnBifurcateFromHereTitle" title="Crear sub-rama tomando esta respuesta como contexto inicial">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg>
-        Bifurcar desde aquí
+        <span data-i18n="btnBifurcateFromHere">Bifurcar desde aquí</span>
       </button>
     </div>
 
     <div class="chat-area">
       <div id="chat-history"></div>
       <div class="chat-input-row">
-        <input type="text" id="chat-input" placeholder="Continúa la conversación con esta uva..." autocomplete="off">
+        <input type="text" id="chat-input" data-i18n-placeholder="chatInputPlaceholder" placeholder="Continúa la conversación con esta uva..." autocomplete="off">
         <button class="send-btn" id="chat-send">
-          Enviar
+          <span data-i18n="btnSend">Enviar</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
@@ -718,16 +755,16 @@ body.marks-hidden .bif-term::after { display: none; }
     <div class="notes">
       <div class="notes-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1-2-2v-14a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="14" y2="16"/></svg>
-        Mis notas sobre esta uva
-        <span class="saved-flash" id="saved-flash">guardado</span>
+        <span data-i18n="notesHeader">Mis notas sobre esta uva</span>
+        <span class="saved-flash" id="saved-flash" data-i18n="notesSaved">guardado</span>
       </div>
-      <textarea id="notes-input" placeholder="Añade un pensamiento, una pregunta pendiente, una idea para retomar..."></textarea>
+      <textarea id="notes-input" data-i18n-placeholder="notesPlaceholder" placeholder="Añade un pensamiento, una pregunta pendiente, una idea para retomar..."></textarea>
     </div>
   </div>
 </div>
 
 <div class="sim" id="chat-sim">
-  <div class="divider">VISTA PREVIA EN EL CHAT</div>
+  <div class="divider" data-i18n="citePreviewDivider">VISTA PREVIA EN EL CHAT</div>
   <div class="row-r">
     <div class="bubble-u">
       <div class="cited-card" style="margin-bottom: 10px;">
@@ -741,7 +778,7 @@ body.marks-hidden .bif-term::after { display: none; }
           <div class="cs" id="uc-snippet"></div>
         </div>
       </div>
-      <div style="font-size: 13px;">Quería retomar esto contigo: ¿podemos profundizar y aplicar lo que vimos a mi situación actual?</div>
+      <div style="font-size: 13px;" data-i18n="citePreviewMessage">Quería retomar esto contigo: ¿podemos profundizar y aplicar lo que vimos a mi situación actual?</div>
     </div>
   </div>
   <div class="row-l">
@@ -750,7 +787,7 @@ body.marks-hidden .bif-term::after { display: none; }
       <div id="claude-card-wrap" style="display: none;">
         <div style="font-size: 11px; opacity: .85; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l18 0"/><path d="M3 18l18 0"/><path d="M16 3l5 3l-5 3"/><path d="M8 15l-5 3l5 3"/></svg>
-          También conversamos sobre esto:
+          <span data-i18n="citePreviewAlsoSee">También conversamos sobre esto:</span>
         </div>
         <div class="cited-card">
           <div class="stripe" id="cc-stripe"></div>
@@ -776,7 +813,7 @@ body.marks-hidden .bif-term::after { display: none; }
 
 <div class="persist-hint">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg>
-  Las uvas, las conversaciones, las notas y las síntesis se guardan automáticamente en tu navegador.
+  <span data-i18n="persistHint">Las uvas, las conversaciones, las notas y las síntesis se guardan automáticamente en tu navegador.</span>
 </div>
 
 
@@ -785,15 +822,15 @@ body.marks-hidden .bif-term::after { display: none; }
 <!-- Modal: new uva -->
 <div class="modal-overlay" id="modal-new">
   <div class="modal">
-    <h3>Nueva uva en <span id="new-cluster-name"></span></h3>
-    <p class="modal-sub">Empezarás una conversación nueva con Claude sobre este tema.</p>
-    <label>Título de la uva</label>
-    <input type="text" id="new-uva-title" placeholder="ej. Cómo organizar el cumpleaños">
-    <label>Tu primera pregunta</label>
-    <textarea id="new-uva-question" placeholder="¿Qué quieres preguntar?"></textarea>
+    <h3><span data-i18n="modalNewUvaTitle">Nueva uva en</span> <span id="new-cluster-name"></span></h3>
+    <p class="modal-sub" data-i18n="modalNewUvaSub">Empezarás una conversación nueva con Claude sobre este tema.</p>
+    <label data-i18n="labelUvaTitle">Título de la uva</label>
+    <input type="text" id="new-uva-title" data-i18n-placeholder="placeholderUvaTitle" placeholder="ej. Cómo organizar el cumpleaños">
+    <label data-i18n="labelFirstQuestion">Tu primera pregunta</label>
+    <textarea id="new-uva-question" data-i18n-placeholder="placeholderQuestion" placeholder="¿Qué quieres preguntar?"></textarea>
     <div class="modal-actions">
-      <button class="btn" id="new-cancel">Cancelar</button>
-      <button class="send-btn" id="new-create">Crear y pedir respuesta</button>
+      <button class="btn" id="new-cancel" data-i18n="btnCancel">Cancelar</button>
+      <button class="send-btn" id="new-create" data-i18n="btnCreate">Crear y pedir respuesta</button>
     </div>
   </div>
 </div>
@@ -801,19 +838,19 @@ body.marks-hidden .bif-term::after { display: none; }
 <!-- Modal: bifurcar -->
 <div class="modal-overlay" id="modal-bifurcar">
   <div class="modal">
-    <h3>Bifurcar sub-rama</h3>
-    <p class="modal-sub">La nueva uva hereda todo el contexto de "<span id="bif-parent-title"></span>". Úsalo cuando quieras explorar una tangente sin contaminar el hilo principal.</p>
+    <h3 data-i18n="modalBifTitle">Bifurcar sub-rama</h3>
+    <p class="modal-sub" id="bif-modal-sub"><span data-i18n="modalBifSubPrefix">La nueva uva hereda todo el contexto de "</span><span id="bif-parent-title"></span><span data-i18n="modalBifSubSuffix">". Úsalo cuando quieras explorar una tangente sin contaminar el hilo principal.</span></p>
     <div id="bif-seed-wrap" style="display:none; margin-bottom: 4px;">
-      <label style="margin-top: 0;">Bifurcando a partir de esta respuesta de Claude:</label>
+      <label style="margin-top: 0;" data-i18n="labelBifSeed">Bifurcando a partir de esta respuesta de Claude:</label>
       <div id="bif-seed" style="background: #E6F1FB; color: #0C447C; padding: 8px 10px; border-radius: 6px; font-size: 12px; line-height: 1.5; max-height: 100px; overflow-y: auto; white-space: pre-wrap;"></div>
     </div>
-    <label>Título de la sub-rama</label>
-    <input type="text" id="bif-title" placeholder="ej. Profundizar en el subtema X">
-    <label>Tu primera pregunta para la sub-rama</label>
-    <textarea id="bif-question" placeholder="¿Qué quieres explorar a partir de aquí?"></textarea>
+    <label data-i18n="labelSubTitle">Título de la sub-rama</label>
+    <input type="text" id="bif-title" data-i18n-placeholder="placeholderSubTitle" placeholder="ej. Profundizar en el subtema X">
+    <label data-i18n="labelSubQuestion">Tu primera pregunta para la sub-rama</label>
+    <textarea id="bif-question" data-i18n-placeholder="placeholderSubQuestion" placeholder="¿Qué quieres explorar a partir de aquí?"></textarea>
     <div class="modal-actions">
-      <button class="btn" id="bif-cancel">Cancelar</button>
-      <button class="send-btn" id="bif-create">Bifurcar y preguntar</button>
+      <button class="btn" id="bif-cancel" data-i18n="btnCancel">Cancelar</button>
+      <button class="send-btn" id="bif-create" data-i18n="btnBifurcateAsk">Bifurcar y preguntar</button>
     </div>
   </div>
 </div>
@@ -821,19 +858,19 @@ body.marks-hidden .bif-term::after { display: none; }
 <!-- Modal: síntesis del racimo -->
 <div class="modal-overlay" id="modal-distill">
   <div class="modal" style="max-width: 580px;">
-    <h3 id="distill-cluster-name">Síntesis del racimo</h3>
+    <h3 id="distill-cluster-name" data-i18n="distillModalTitlePrefix">Síntesis del racimo</h3>
     <p class="modal-sub" id="distill-meta">—</p>
-    <div class="distill-body" id="distill-body">Preparando síntesis...</div>
+    <div class="distill-body" id="distill-body" data-i18n="distillPreparing">Preparando síntesis...</div>
     <div class="modal-actions">
       <button class="btn" id="distill-download" disabled>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Descargar .md
+        <span data-i18n="btnDownloadMd">Descargar .md</span>
       </button>
       <button class="btn" id="distill-copy" disabled>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copiar
+        <span data-i18n="btnCopy">Copiar</span>
       </button>
-      <button class="send-btn" id="distill-close">Cerrar</button>
+      <button class="send-btn" id="distill-close" data-i18n="btnClose">Cerrar</button>
     </div>
   </div>
 </div>
@@ -841,15 +878,15 @@ body.marks-hidden .bif-term::after { display: none; }
 <!-- Modal: nuevo racimo -->
 <div class="modal-overlay" id="modal-new-racimo">
   <div class="modal">
-    <h3>Crear un nuevo racimo</h3>
-    <p class="modal-sub">Los racimos agrupan tus uvas por tema o área de vida.</p>
-    <label>Nombre del racimo</label>
-    <input type="text" id="nr-name" placeholder="ej. Salud, Familia, Side project, Inversiones..." maxlength="24">
-    <label>Color</label>
+    <h3 data-i18n="modalNewRacimoTitle">Crear un nuevo racimo</h3>
+    <p class="modal-sub" data-i18n="modalNewRacimoSub">Los racimos agrupan tus uvas por tema o área de vida.</p>
+    <label data-i18n="labelClusterName">Nombre del racimo</label>
+    <input type="text" id="nr-name" data-i18n-placeholder="placeholderClusterName" placeholder="ej. Salud, Familia, Side project, Inversiones..." maxlength="24">
+    <label data-i18n="labelColor">Color</label>
     <div class="color-palette" id="nr-palette"></div>
     <div class="modal-actions">
-      <button class="btn" id="nr-cancel">Cancelar</button>
-      <button class="send-btn" id="nr-create">Crear racimo</button>
+      <button class="btn" id="nr-cancel" data-i18n="btnCancel">Cancelar</button>
+      <button class="send-btn" id="nr-create" data-i18n="btnCreateCluster">Crear racimo</button>
     </div>
   </div>
 </div>
@@ -863,13 +900,25 @@ const CLUSTERS = {
 
 // Pre-baked syntheses per cluster, used as fallback when askClaude is not available
 // (e.g. standalone HTML opened in a browser without the Cowork bridge).
-const DEMO_SYNTHESES = {
-  Trabajo: '**Temas dominantes**\nEste racimo gira alrededor del trabajo de un product manager o líder de equipo en mitad de un trimestre activo. Domina la preocupación por la comunicación interna (reuniones, all-hands, emails), la definición de prioridades (PRD, roadmap, estimaciones), y la lectura del entorno (encuesta de usuarios, análisis de competencia).\n\n**Decisiones e ideas clave**\n— Estructurar el dashboard del Q2 en tres bloques: adquisición, retención, monetización.\n— El PRD necesita métricas de éxito explícitas y un plan de rollback antes de mandarlo.\n— La estimación del feature de notificaciones es de 3-4 semanas, con riesgo real de subestimar la configuración por usuario.\n— Los tres temas dominantes en la encuesta son lentitud de carga, confusión de onboarding, y demanda de modo oscuro.\n\n**Preguntas abiertas**\nLa tensión entre apuestas grandes y mejoras incrementales en el roadmap Q3 todavía no está resuelta. Tampoco está claro qué se va a decir en el all-hands más allá del win inicial — el bloque de propuesta accionable falta. Y la decisión de qué priorizar de la encuesta (¿velocidad? ¿onboarding? ¿modo oscuro?) merece su propia conversación.',
-
-  Personal: '**Temas dominantes**\nEste racimo retrata a alguien en mitad de varias decisiones personales — un viaje a Japón, una posible mudanza, una bici nueva, un mensaje difícil a un amigo — y también de necesidades cotidianas como recetas o rutina de ejercicio. Lo une la práctica de pensar en voz alta antes de actuar.\n\n**Decisiones e ideas clave**\n— Para Japón en octubre: Tokio 4 días, Kioto 3, Hakone 1, Kanazawa 2.\n— Rutina de ejercicio sin pesas estructurada en tres días: empuje, tirón y core, piernas.\n— Marco para el mensaje difícil al amigo: foco en el efecto ("cuando pasó X, sentí Y"), no en la intención.\n— Carta de cumpleaños para la hermana: recuerdo concreto, admiración actual, deseo claro al final.\n\n**Preguntas abiertas**\nLa decisión de quedarse o mudarse aún no está cerrada — el ejercicio de listar qué da energía hoy versus lo que la quita está por hacer. La compra de bici (urbana vs gravel) depende de la proporción real de uso entre semana y fin de semana, que no se ha medido todavía. Y el libro de la siguiente lectura sigue oscilando entre dos opciones.',
-
-  Aprendizaje: '**Temas dominantes**\nEste racimo dibuja a alguien en un periodo de aprender muchas cosas a la vez: escritura creativa, estadística, métricas de producto, alemán, filosofía estoica, música clásica, negociación, diseño tipográfico, historia del siglo XX. Lo curioso es que casi todas las disciplinas comparten una misma estructura — piden oído paciente más que técnica brillante.\n\n**Decisiones e ideas clave**\n— Personajes creíbles se construyen con contradicciones pequeñas, no con descripciones largas.\n— Las métricas estrella de un SaaS (activación, retención) van separadas de las de salud (NPS, latencia); una estrella norte por trimestre.\n— Para aprender un idioma, sobra gramática y falta exposición: 20 minutos diarios de audio nativo desbloquean más que un curso completo.\n— Empezar con estoicismo: Marco Aurelio primero, Séneca después, Epicteto si sigue interesando.\n\n**Preguntas abiertas**\nEl método se repite: cada disciplina pide repetición paciente. Falta convertir ese descubrimiento en una rutina concreta — qué disciplina priorizar este mes, qué cadencia de práctica funciona. La conexión entre "Métricas de producto" aquí y "Revisión del PRD" en el racimo Trabajo merece su propia sub-rama.'
+const DEMO_SYNTHESES_TEMPLATES = {
+  es: {
+    Trabajo: '**Temas dominantes**\nEste racimo gira alrededor del trabajo de un product manager o líder de equipo en mitad de un trimestre activo. Domina la preocupación por la comunicación interna (reuniones, all-hands, emails), la definición de prioridades (PRD, roadmap, estimaciones), y la lectura del entorno (encuesta de usuarios, análisis de competencia).\n\n**Decisiones e ideas clave**\n— Estructurar el dashboard del Q2 en tres bloques: adquisición, retención, monetización.\n— El PRD necesita métricas de éxito explícitas y un plan de rollback antes de mandarlo.\n— La estimación del feature de notificaciones es de 3-4 semanas, con riesgo real de subestimar la configuración por usuario.\n— Los tres temas dominantes en la encuesta son lentitud de carga, confusión de onboarding, y demanda de modo oscuro.\n\n**Preguntas abiertas**\nLa tensión entre apuestas grandes y mejoras incrementales en el roadmap Q3 todavía no está resuelta. Tampoco está claro qué se va a decir en el all-hands más allá del win inicial. Y la decisión de qué priorizar de la encuesta merece su propia conversación.',
+    Personal: '**Temas dominantes**\nEste racimo retrata a alguien en mitad de varias decisiones personales — un viaje a Japón, una posible mudanza, una bici nueva, un mensaje difícil a un amigo — y también de necesidades cotidianas como recetas o rutina de ejercicio. Lo une la práctica de pensar en voz alta antes de actuar.\n\n**Decisiones e ideas clave**\n— Para Japón en octubre: Tokio 4 días, Kioto 3, Hakone 1, Kanazawa 2.\n— Rutina de ejercicio sin pesas estructurada en tres días: empuje, tirón y core, piernas.\n— Marco para el mensaje difícil al amigo: foco en el efecto ("cuando pasó X, sentí Y"), no en la intención.\n— Carta de cumpleaños para la hermana: recuerdo concreto, admiración actual, deseo claro al final.\n\n**Preguntas abiertas**\nLa decisión de quedarse o mudarse aún no está cerrada. La compra de bici (urbana vs gravel) depende de la proporción real de uso entre semana y fin de semana, que no se ha medido todavía. Y el libro de la siguiente lectura sigue oscilando entre dos opciones.',
+    Aprendizaje: '**Temas dominantes**\nEste racimo dibuja a alguien en un periodo de aprender muchas cosas a la vez: escritura creativa, estadística, métricas de producto, alemán, filosofía estoica, música clásica, negociación, diseño tipográfico, historia del siglo XX. Lo curioso es que casi todas las disciplinas comparten una misma estructura — piden oído paciente más que técnica brillante.\n\n**Decisiones e ideas clave**\n— Personajes creíbles se construyen con contradicciones pequeñas, no con descripciones largas.\n— Las métricas estrella de un SaaS (activación, retención) van separadas de las de salud (NPS, latencia); una estrella norte por trimestre.\n— Para aprender un idioma, sobra gramática y falta exposición: 20 minutos diarios de audio nativo desbloquean más que un curso completo.\n— Empezar con estoicismo: Marco Aurelio primero, Séneca después, Epicteto si sigue interesando.\n\n**Preguntas abiertas**\nEl método se repite: cada disciplina pide repetición paciente. Falta convertir ese descubrimiento en una rutina concreta — qué disciplina priorizar este mes, qué cadencia de práctica funciona. La conexión entre "Métricas de producto" aquí y "Revisión del PRD" en el racimo Trabajo merece su propia sub-rama.'
+  },
+  en: {
+    Trabajo: '**Dominant themes**\nThis cluster revolves around the work of a product manager or team lead in the middle of an active quarter. The dominant concerns are internal communication (meetings, all-hands, emails), priority-setting (PRD, roadmap, estimations), and reading the environment (user survey, competitive analysis).\n\n**Decisions and key ideas**\n— Structure the Q2 dashboard in three blocks: acquisition, retention, monetization.\n— The PRD needs explicit success metrics and a rollback plan before sending.\n— The notifications feature estimation is 3-4 weeks, with real risk of underestimating the per-user configuration.\n— The three dominant themes in the survey are slow loading, confusing onboarding, and demand for dark mode.\n\n**Open questions**\nThe tension between big bets and incremental improvements in the Q3 roadmap is still unresolved. It also isn\'t clear what will be said at the all-hands beyond the opening win. And the decision of what to prioritize from the survey deserves its own conversation.',
+    Personal: '**Dominant themes**\nThis cluster portrays someone in the middle of several personal decisions — a Japan trip, a possible move, a new bike, a hard message to a friend — and also everyday needs like recipes or an exercise routine. What unites them is the practice of thinking out loud before acting.\n\n**Decisions and key ideas**\n— For Japan in October: Tokyo 4 days, Kyoto 3, Hakone 1, Kanazawa 2.\n— A no-weights exercise routine structured in three days: push, pull and core, legs.\n— Framework for the hard message: focus on the effect ("when X happened, I felt Y"), not on intent.\n— Birthday letter for sister: concrete memory, current admiration, clear wish at the end.\n\n**Open questions**\nThe decision to stay or move is not yet closed. The bike purchase (urban vs gravel) depends on the actual ratio of weekday vs weekend use, which hasn\'t been measured yet. And the next book to read keeps oscillating between two options.',
+    Aprendizaje: '**Dominant themes**\nThis cluster sketches someone in a period of learning many things at once: creative writing, statistics, product metrics, German, stoic philosophy, classical music, negotiation, typography design, 20th century history. The curious thing is that nearly all the disciplines share a common structure — they require patient ear more than brilliant technique.\n\n**Decisions and key ideas**\n— Believable characters are built with small contradictions, not long descriptions.\n— SaaS star metrics (activation, retention) are separate from health metrics (NPS, latency); one north star per quarter.\n— To learn a language, there\'s too much grammar and not enough exposure: 20 minutes of native audio daily unlocks more than a full course.\n— Starting stoicism: Marcus Aurelius first, then Seneca, Epictetus only if still interested.\n\n**Open questions**\nThe method repeats: each discipline asks for patient repetition. What\'s missing is turning that discovery into a concrete routine — which discipline to prioritize this month, what practice cadence works. The connection between "Product metrics" here and "PRD review" in the Work cluster deserves its own sub-branch.'
+  }
 };
+
+function DEMO_SYNTHESES_FOR(cluster) {
+  const lang = (typeof currentLang !== "undefined") ? currentLang : "es";
+  const pack = DEMO_SYNTHESES_TEMPLATES[lang] || DEMO_SYNTHESES_TEMPLATES.es;
+  return pack[cluster];
+}
+
 
 // Palette for new user-created racimos (each gets a distinct ramp)
 const PALETTE = [
@@ -895,35 +944,76 @@ function nextRacimoSlot(idx) {
   return { centerX: 340, anchorY: 1055 + (idx - 5) * 200 };
 }
 
-const INITIAL_UVAS = [
-  {id:'t1',cluster:'Trabajo',cx:150,cy:55, title:'Diseño del nuevo dashboard',u:'¿Cómo estructuro el dashboard con los KPIs del Q2?',c:'Sugiero tres bloques: [[adquisición]], [[retención]] y [[monetización]].'},
-  {id:'t2',cluster:'Trabajo',cx:130,cy:85, title:'Revisión del PRD',u:'Lee el PRD adjunto y dime qué falta antes de mandarlo.',c:'Scope claro, faltan métricas de éxito explícitas y un plan de rollback.',related:'a3'},
-  {id:'t3',cluster:'Trabajo',cx:170,cy:85, title:'Email al equipo de legal',u:'Redacta un email pidiendo revisión del contrato.',c:'Borrador conciso, asunto claro, los tres puntos críticos resaltados.'},
-  {id:'t4',cluster:'Trabajo',cx:110,cy:115,title:'Plan de la reunión 1:1',u:'Prepara la 1:1 con mi manager esta semana.',c:'Tres temas: bloqueos, decisión pendiente, feedback bidireccional.'},
-  {id:'t5',cluster:'Trabajo',cx:150,cy:115,title:'Estimación de esfuerzo',u:'¿Cuánto tarda implementar el feature de notificaciones?',c:'3-4 semanas con un dev. La configuración por usuario se subestima.'},
-  {id:'t6',cluster:'Trabajo',cx:190,cy:115,title:'Síntesis de la encuesta',u:'Resume los hallazgos de la encuesta de usuarios.',c:'Tres temas: [[carga lenta]], [[onboarding confuso]], demanda de [[modo oscuro]].'},
-  {id:'t7',cluster:'Trabajo',cx:130,cy:145,title:'Roadmap del próximo trimestre',u:'Primer borrador del roadmap Q3.',c:'Tres apuestas grandes, cuatro mejoras incrementales, dependencias marcadas.'},
-  {id:'t8',cluster:'Trabajo',cx:170,cy:145,title:'Análisis de competencia',u:'Compara nuestras features con los tres competidores principales.',c:'Por delante en personalización y precio, rezagados en integraciones.'},
-  {id:'t9',cluster:'Trabajo',cx:150,cy:175,title:'Borrador del all-hands',u:'Estructura mi parte del all-hands del viernes.',c:'Arranca con un win, muestra un dato sorprendente, cierra con algo accionable.'},
-  {id:'p1',cluster:'Personal',cx:530,cy:55, title:'Plan de viaje a Japón',u:'Tengo 10 días en octubre, ¿qué ruta me recomiendas?',c:'Tokio 4, [[Kioto]] 3, [[Hakone]] 1, y deja 2 noches para [[Kanazawa]].'},
-  {id:'p2',cluster:'Personal',cx:510,cy:85, title:'Receta para la cena',u:'Tengo pollo, espinacas y arroz. ¿Qué hago?',c:'Bowl salteado: pollo con ajo, espinacas al final, arroz, huevo encima.'},
-  {id:'p3',cluster:'Personal',cx:550,cy:85, title:'Carta de cumpleaños',u:'Escribirle algo bonito a mi hermana por su cumple.',c:'Elige un recuerdo concreto, di por qué la admiras hoy, deseo claro al final.',related:'a1'},
-  {id:'p4',cluster:'Personal',cx:490,cy:115,title:'Rutina de ejercicio',u:'Diseña una rutina 3 días por semana, sin pesas.',c:'Día A empuje, día B tirón y core, día C piernas.'},
-  {id:'p5',cluster:'Personal',cx:530,cy:115,title:'Lista de la compra',u:'Arma la lista para la semana.',c:'Organizada por sección del súper para que tardes menos.'},
-  {id:'p6',cluster:'Personal',cx:570,cy:115,title:'Mensaje difícil a un amigo',u:'Decirle a un amigo que algo me dolió, sin sonar agresivo.',c:'Foco en el efecto, no la intención: "cuando pasó X, sentí Y".'},
-  {id:'p7',cluster:'Personal',cx:510,cy:145,title:'Compra de bici nueva',u:'Compara bici urbana vs gravel para uso mixto.',c:'Más entre semana: urbana. Findes pesan: gravel.'},
-  {id:'p8',cluster:'Personal',cx:550,cy:145,title:'Decisión sobre la mudanza',u:'¿Cómo decido entre quedarme o mudarme?',c:'Lista qué te da energía hoy y qué te la quita. Compara con la mudanza.'},
-  {id:'p9',cluster:'Personal',cx:530,cy:175,title:'Libros recomendados',u:'Algo que se lea rápido pero deje poso.',c:'"Stoner" de John Williams. "Klara y el sol" de Ishiguro.'},
-  {id:'a1',cluster:'Aprendizaje',cx:340,cy:255,title:'Escritura creativa',u:'¿Cómo escribir un personaje creíble sin sobreexplicarlo?',c:'Contradicciones pequeñas: lo que dice vs lo que hace.',related:'p3'},
-  {id:'a2',cluster:'Aprendizaje',cx:320,cy:285,title:'Conceptos de estadística',u:'Explica intervalos de confianza como si tuviera 12 años.',c:'100 muestras, el intervalo 95% capturaría la verdad en unas 95.'},
-  {id:'a3',cluster:'Aprendizaje',cx:360,cy:285,title:'Métricas de producto',u:'¿Qué métricas importan en un SaaS?',c:'Estrella ([[activación]], [[retención]]) vs salud ([[NPS]], [[latencia]]). Una [[estrella norte]] por trimestre.',related:'t2'},
-  {id:'a4',cluster:'Aprendizaje',cx:300,cy:315,title:'Aprender alemán',u:'Llevo 3 meses y me cuesta avanzar.',c:'Sobra gramática, falta exposición. 20 min diarios de audio nativo.'},
-  {id:'a5',cluster:'Aprendizaje',cx:340,cy:315,title:'Filosofía estoica',u:'¿Por dónde empiezo si no sé nada de estoicismo?',c:'"Meditaciones" de [[Marco Aurelio]]. Luego "Cartas a Lucilio" de [[Séneca]]. Salta a [[Epicteto]] si te enganchas.'},
-  {id:'a6',cluster:'Aprendizaje',cx:380,cy:315,title:'Música clásica',u:'Quiero educar el oído. ¿Por dónde empiezo?',c:'[[Bach]] (estructura), [[Chopin]] (emoción), [[Stravinsky]] (ritmo).'},
-  {id:'a7',cluster:'Aprendizaje',cx:320,cy:345,title:'Negociación de salario',u:'¿Cómo negocio sin sonar exigente?',c:'Argumenta desde mercado e impacto, no desde necesidad.'},
-  {id:'a8',cluster:'Aprendizaje',cx:360,cy:345,title:'Diseño tipográfico',u:'¿Por qué algunas tipografías se sienten profesionales?',c:'Proporciones discretas, contraste medio, sin personalidad chillona.'},
-  {id:'a9',cluster:'Aprendizaje',cx:340,cy:375,title:'Historia del siglo XX',u:'Recomiéndame un libro de historia del siglo XX.',c:'"El siglo XX" de [[Eric Hobsbawm]]. O "Postguerra" de [[Tony Judt]], que cubre Europa de [[1945]] a 2005.'}
-];
+const INITIAL_UVAS_TEMPLATES = {
+  es: [
+    {id:'t1',cluster:'Trabajo',cx:150,cy:55, title:'Diseño del nuevo dashboard',u:'¿Cómo estructuro el dashboard con los KPIs del Q2?',c:'Sugiero tres bloques: [[adquisición]], [[retención]] y [[monetización]].'},
+    {id:'t2',cluster:'Trabajo',cx:130,cy:85, title:'Revisión del PRD',u:'Lee el PRD adjunto y dime qué falta antes de mandarlo.',c:'Scope claro, faltan métricas de éxito explícitas y un plan de rollback.',related:'a3'},
+    {id:'t3',cluster:'Trabajo',cx:170,cy:85, title:'Email al equipo de legal',u:'Redacta un email pidiendo revisión del contrato.',c:'Borrador conciso, asunto claro, los tres puntos críticos resaltados.'},
+    {id:'t4',cluster:'Trabajo',cx:110,cy:115,title:'Plan de la reunión 1:1',u:'Prepara la 1:1 con mi manager esta semana.',c:'Tres temas: bloqueos, decisión pendiente, feedback bidireccional.'},
+    {id:'t5',cluster:'Trabajo',cx:150,cy:115,title:'Estimación de esfuerzo',u:'¿Cuánto tarda implementar el feature de notificaciones?',c:'3-4 semanas con un dev. La configuración por usuario se subestima.'},
+    {id:'t6',cluster:'Trabajo',cx:190,cy:115,title:'Síntesis de la encuesta',u:'Resume los hallazgos de la encuesta de usuarios.',c:'Tres temas: [[carga lenta]], [[onboarding confuso]], demanda de [[modo oscuro]].'},
+    {id:'t7',cluster:'Trabajo',cx:130,cy:145,title:'Roadmap del próximo trimestre',u:'Primer borrador del roadmap Q3.',c:'Tres apuestas grandes, cuatro mejoras incrementales, dependencias marcadas.'},
+    {id:'t8',cluster:'Trabajo',cx:170,cy:145,title:'Análisis de competencia',u:'Compara nuestras features con los tres competidores principales.',c:'Por delante en personalización y precio, rezagados en integraciones.'},
+    {id:'t9',cluster:'Trabajo',cx:150,cy:175,title:'Borrador del all-hands',u:'Estructura mi parte del all-hands del viernes.',c:'Arranca con un win, muestra un dato sorprendente, cierra con algo accionable.'},
+    {id:'p1',cluster:'Personal',cx:530,cy:55, title:'Plan de viaje a Japón',u:'Tengo 10 días en octubre, ¿qué ruta me recomiendas?',c:'Tokio 4, [[Kioto]] 3, [[Hakone]] 1, y deja 2 noches para [[Kanazawa]].'},
+    {id:'p2',cluster:'Personal',cx:510,cy:85, title:'Receta para la cena',u:'Tengo pollo, espinacas y arroz. ¿Qué hago?',c:'Bowl salteado: pollo con ajo, espinacas al final, arroz, huevo encima.'},
+    {id:'p3',cluster:'Personal',cx:550,cy:85, title:'Carta de cumpleaños',u:'Escribirle algo bonito a mi hermana por su cumple.',c:'Elige un recuerdo concreto, di por qué la admiras hoy, deseo claro al final.',related:'a1'},
+    {id:'p4',cluster:'Personal',cx:490,cy:115,title:'Rutina de ejercicio',u:'Diseña una rutina 3 días por semana, sin pesas.',c:'Día A empuje, día B tirón y core, día C piernas.'},
+    {id:'p5',cluster:'Personal',cx:530,cy:115,title:'Lista de la compra',u:'Arma la lista para la semana.',c:'Organizada por sección del súper para que tardes menos.'},
+    {id:'p6',cluster:'Personal',cx:570,cy:115,title:'Mensaje difícil a un amigo',u:'Decirle a un amigo que algo me dolió, sin sonar agresivo.',c:'Foco en el efecto, no la intención: "cuando pasó X, sentí Y".'},
+    {id:'p7',cluster:'Personal',cx:510,cy:145,title:'Compra de bici nueva',u:'Compara bici urbana vs gravel para uso mixto.',c:'Más entre semana: urbana. Findes pesan: gravel.'},
+    {id:'p8',cluster:'Personal',cx:550,cy:145,title:'Decisión sobre la mudanza',u:'¿Cómo decido entre quedarme o mudarme?',c:'Lista qué te da energía hoy y qué te la quita. Compara con la mudanza.'},
+    {id:'p9',cluster:'Personal',cx:530,cy:175,title:'Libros recomendados',u:'Algo que se lea rápido pero deje poso.',c:'"Stoner" de John Williams. "Klara y el sol" de Ishiguro.'},
+    {id:'a1',cluster:'Aprendizaje',cx:340,cy:255,title:'Escritura creativa',u:'¿Cómo escribir un personaje creíble sin sobreexplicarlo?',c:'Contradicciones pequeñas: lo que dice vs lo que hace.',related:'p3'},
+    {id:'a2',cluster:'Aprendizaje',cx:320,cy:285,title:'Conceptos de estadística',u:'Explica intervalos de confianza como si tuviera 12 años.',c:'100 muestras, el intervalo 95% capturaría la verdad en unas 95.'},
+    {id:'a3',cluster:'Aprendizaje',cx:360,cy:285,title:'Métricas de producto',u:'¿Qué métricas importan en un SaaS?',c:'Estrella ([[activación]], [[retención]]) vs salud ([[NPS]], [[latencia]]). Una [[estrella norte]] por trimestre.',related:'t2'},
+    {id:'a4',cluster:'Aprendizaje',cx:300,cy:315,title:'Aprender alemán',u:'Llevo 3 meses y me cuesta avanzar.',c:'Sobra gramática, falta exposición. 20 min diarios de audio nativo.'},
+    {id:'a5',cluster:'Aprendizaje',cx:340,cy:315,title:'Filosofía estoica',u:'¿Por dónde empiezo si no sé nada de estoicismo?',c:'"Meditaciones" de [[Marco Aurelio]]. Luego "Cartas a Lucilio" de [[Séneca]]. Salta a [[Epicteto]] si te enganchas.'},
+    {id:'a6',cluster:'Aprendizaje',cx:380,cy:315,title:'Música clásica',u:'Quiero educar el oído. ¿Por dónde empiezo?',c:'[[Bach]] (estructura), [[Chopin]] (emoción), [[Stravinsky]] (ritmo).'},
+    {id:'a7',cluster:'Aprendizaje',cx:320,cy:345,title:'Negociación de salario',u:'¿Cómo negocio sin sonar exigente?',c:'Argumenta desde mercado e impacto, no desde necesidad.'},
+    {id:'a8',cluster:'Aprendizaje',cx:360,cy:345,title:'Diseño tipográfico',u:'¿Por qué algunas tipografías se sienten profesionales?',c:'Proporciones discretas, contraste medio, sin personalidad chillona.'},
+    {id:'a9',cluster:'Aprendizaje',cx:340,cy:375,title:'Historia del siglo XX',u:'Recomiéndame un libro de historia del siglo XX.',c:'"El siglo XX" de [[Eric Hobsbawm]]. O "Postguerra" de [[Tony Judt]], que cubre Europa de [[1945]] a 2005.'}
+  ],
+  en: [
+    {id:'t1',cluster:'Trabajo',cx:150,cy:55, title:'New dashboard design',u:'How should I structure the dashboard with the Q2 KPIs?',c:'Three blocks: [[acquisition]], [[retention]] and [[monetization]].'},
+    {id:'t2',cluster:'Trabajo',cx:130,cy:85, title:'PRD review',u:'Read the attached PRD and tell me what\'s missing before I send it.',c:'Scope is clear, missing explicit success metrics and a rollback plan.',related:'a3'},
+    {id:'t3',cluster:'Trabajo',cx:170,cy:85, title:'Email to the legal team',u:'Draft an email asking for review of the supplier contract.',c:'Concise draft, clear subject line, the three critical points highlighted up top.'},
+    {id:'t4',cluster:'Trabajo',cx:110,cy:115,title:'1:1 meeting plan',u:'Help me prepare the 1:1 with my manager this week.',c:'Three topics: blockers, a pending decision, bidirectional feedback.'},
+    {id:'t5',cluster:'Trabajo',cx:150,cy:115,title:'Effort estimation',u:'How long will the notifications feature take to implement?',c:'3-4 weeks with one dev. Per-user configuration is the part that gets underestimated.'},
+    {id:'t6',cluster:'Trabajo',cx:190,cy:115,title:'User survey synthesis',u:'Summarize the key findings from the user survey.',c:'Three themes dominate: [[slow loading]], [[confusing onboarding]], demand for [[dark mode]].'},
+    {id:'t7',cluster:'Trabajo',cx:130,cy:145,title:'Next quarter roadmap',u:'First draft of the Q3 roadmap.',c:'Three big bets and four incremental improvements, with dependencies marked.'},
+    {id:'t8',cluster:'Trabajo',cx:170,cy:145,title:'Competitive analysis',u:'Compare our features against the three main competitors.',c:'Ahead in personalization and price, on par in speed, behind in native integrations.'},
+    {id:'t9',cluster:'Trabajo',cx:150,cy:175,title:'All-hands draft',u:'Structure my section of Friday\'s all-hands.',c:'Open with a concrete win, show a surprising data point, close with something actionable for the team.'},
+    {id:'p1',cluster:'Personal',cx:530,cy:55, title:'Japan trip plan',u:'I have 10 days in October — what route do you recommend?',c:'Tokyo 4, [[Kyoto]] 3, [[Hakone]] 1, leave 2 nights for [[Kanazawa]].'},
+    {id:'p2',cluster:'Personal',cx:510,cy:85, title:'Dinner recipe',u:'I have chicken, spinach and rice. What can I make?',c:'Stir-fry bowl: chicken with garlic, spinach folded in at the end, served over rice with an egg on top.'},
+    {id:'p3',cluster:'Personal',cx:550,cy:85, title:'Birthday letter',u:'I want to write something nice for my sister\'s birthday.',c:'Pick a specific memory of you two, say why you admire her today, end with a clear wish for her year.',related:'a1'},
+    {id:'p4',cluster:'Personal',cx:490,cy:115,title:'Exercise routine',u:'Design a 3-day-per-week routine, no weights.',c:'Day A push (push-ups, dips), day B pull and core (rows with a backpack, planks), day C legs (squats, lunges, bridge).'},
+    {id:'p5',cluster:'Personal',cx:530,cy:115,title:'Grocery list',u:'Help me put together the weekly list.',c:'Organized by supermarket section so it takes less time: produce, butcher, dairy, pantry, frozen.'},
+    {id:'p6',cluster:'Personal',cx:570,cy:115,title:'Hard message to a friend',u:'I need to tell a friend something hurt me, without sounding aggressive.',c:'Focus on the effect, not the intent: "when X happened, I felt Y" instead of "you made me feel Y".'},
+    {id:'p7',cluster:'Personal',cx:510,cy:145,title:'Buying a new bike',u:'Compare urban vs gravel bike for mixed city/weekend use.',c:'If you ride more during the week, urban with slightly wider tires. If weekends weigh more, gravel: handles asphalt and dirt without much penalty.'},
+    {id:'p8',cluster:'Personal',cx:550,cy:145,title:'Decision about moving',u:'How do I decide between staying or moving cities?',c:'List what gives you energy today and what drains it. Ask what changes in each column with the move. Decide cold.'},
+    {id:'p9',cluster:'Personal',cx:530,cy:175,title:'Book recommendations',u:'Something quick to read that still leaves a trace.',c:'"Stoner" by John Williams. "Klara and the Sun" by Ishiguro. Both short, both come back months later.'},
+    {id:'a1',cluster:'Aprendizaje',cx:340,cy:255,title:'Creative writing',u:'How do I write a believable character without over-explaining?',c:'Show small contradictions: what they say vs what they do, what they look at when they\'re uncomfortable.',related:'p3'},
+    {id:'a2',cluster:'Aprendizaje',cx:320,cy:285,title:'Statistics concepts',u:'Explain confidence intervals like I\'m 12.',c:'If you measured the same thing 100 times with different samples, the 95% interval would capture the true answer in about 95 of them.'},
+    {id:'a3',cluster:'Aprendizaje',cx:360,cy:285,title:'Product metrics',u:'What metrics matter in a SaaS product?',c:'Star metrics ([[activation]], [[retention]]) separate from health metrics ([[NPS]], [[latency]]). One [[north star]] per quarter.',related:'t2'},
+    {id:'a4',cluster:'Aprendizaje',cx:300,cy:315,title:'Learning German',u:'I\'ve been at it 3 months and I\'m struggling to advance.',c:'Too much grammar, not enough exposure. 20 minutes of native audio daily unblocks more than the theory.'},
+    {id:'a5',cluster:'Aprendizaje',cx:340,cy:315,title:'Stoic philosophy',u:'Where do I start if I know nothing about stoicism?',c:'"Meditations" by [[Marcus Aurelius]] in a modern translation. Then "Letters to Lucilius" by [[Seneca]]. Jump to [[Epictetus]] only if you\'re hooked.'},
+    {id:'a6',cluster:'Aprendizaje',cx:380,cy:315,title:'Classical music',u:'I want to train my ear. Where should I start?',c:'[[Bach]] (structure), [[Chopin]] (emotion), [[Stravinsky]] (rhythm). One work from each, played until you recognize them.'},
+    {id:'a7',cluster:'Aprendizaje',cx:320,cy:345,title:'Salary negotiation',u:'How do I negotiate without sounding demanding?',c:'Don\'t defend the number from need; defend it from market and impact. Ask for the range before showing yours. The silence after your proposal is your ally.'},
+    {id:'a8',cluster:'Aprendizaje',cx:360,cy:345,title:'Typography design',u:'Why do some typefaces feel professional?',c:'Discreet proportions, medium contrast, and they handle hard characters well (g, a, e). Elegance is the absence of loud personality.'},
+    {id:'a9',cluster:'Aprendizaje',cx:340,cy:375,title:'20th century history',u:'Recommend a general history book on the 20th century.',c:'"The Age of Extremes" by [[Eric Hobsbawm]] is the classic. For something more narrative, "Postwar" by [[Tony Judt]] covers Europe from [[1945]] to 2005 beautifully.'}
+  ]
+};
+
+const _initialLang = (function() {
+  try {
+    const saved = localStorage.getItem('racimo_lang_v1');
+    if (saved === 'en' || saved === 'es') return saved;
+  } catch(e) {}
+  return ((navigator.language || navigator.userLanguage || 'en').toLowerCase().startsWith('es')) ? 'es' : 'en';
+})();
+const INITIAL_UVAS = INITIAL_UVAS_TEMPLATES[_initialLang] || INITIAL_UVAS_TEMPLATES.es;
+
 
 const LS_SELECTED        = 'racimo_selected_id_v1';
 const LS_NOTES_PFX       = 'racimo_notes_v1_';
@@ -1011,7 +1101,7 @@ async function safeAskClaude(prompt) {
 function askClaudeFallback() {
   // Friendly message for standalone mode (no Cowork bridge available).
   // For real debugging, window.lastAskClaudeError holds the technical detail.
-  return '*[Modo standalone]* Aquí aparecería la respuesta de Claude. Para verla generarse en vivo, abre el prototipo dentro de un entorno con conexión al modelo. Las uvas pre-cargadas muestran ejemplos del formato esperado.';
+  return t('standaloneFallback');
 }
 
 function getChatHistory(id) {
@@ -1023,10 +1113,273 @@ function saveChatHistory(id, h) {
 }
 
 function radiusFor(id, isSubbranch) {
-  const mobileBoost = window.innerWidth < 640 ? 5 : 0;
+  const mobileBoost = window.innerWidth < 640 ? 1 : 0;
   const base = (isSubbranch ? 12 : 18) + mobileBoost;
   const h = getChatHistory(id);
   return Math.min(base + h.length * 0.7, base + 8);
+}
+
+// ============ i18n ============
+const CLUSTER_LABELS = {
+  Trabajo:     { en: 'Work',     es: 'Trabajo' },
+  Personal:    { en: 'Personal', es: 'Personal' },
+  Aprendizaje: { en: 'Learning', es: 'Aprendizaje' }
+};
+
+const TRANSLATIONS = {
+  en: {
+    proposalTitle: 'Conversation Cluster',
+    proposalSubtitle: 'A spatial UX proposal for conversations with LLMs',
+    proposalAbstract: 'Three integrated ideas: (1) conversations live as grapes grouped into clusters by theme, not as a vertical scroll; (2) any response can branch into a sub-conversation that inherits the parent\'s full context; (3) distilling a cluster is a first-class output, downloadable and persistent. Navigable demo below.',
+    introHeader: 'Three actions to explore the idea:',
+    introItem1: '<strong>Click any grape</strong> to open its conversation. Each grape is a chat with Claude on a concrete topic.',
+    introItem2: '<strong>Click a <span class="intro-resaltado">highlighted</span> word</strong> inside a response — or select any text fragment — to branch into a sub-conversation that inherits the parent\'s context.',
+    introItem3: '<strong>Click "Synthesis"</strong> on a cluster (in the chip bar above the canvas) to distill all its grapes into a careful, downloadable text.',
+    introFoot: 'The eye icon in the search bar toggles the highlights off if you prefer to read clean. Your progress is saved in this browser.',
+    searchPlaceholder: 'Search by title, question or answer…',
+    marksOn: 'Highlights',
+    marksOff: 'Clean read',
+    marksOnTitle: 'Hide highlighted concepts (clean reading mode)',
+    marksOffTitle: 'Show highlighted concepts again',
+    langToggleLabel: 'ES',
+    langToggleTitle: 'Switch to Spanish',
+    dialogEmpty: 'Click any grape from the canvas above to open its conversation. Responses with highlighted words can be branched.',
+    btnBifurcate: 'Branch',
+    btnCite: 'Cite',
+    btnBifurcateFromHere: 'Branch from here',
+    btnBifurcateFromHereTitle: 'Create a sub-branch taking this response as context',
+    btnSend: 'Send',
+    chatInputPlaceholder: 'Continue the conversation with this grape…',
+    notesHeader: 'My notes on this grape',
+    notesPlaceholder: 'Add a thought, an open question, an idea to come back to…',
+    notesSaved: 'saved',
+    chipUva: 'Grape',
+    chipUvaTitle: 'Create a new grape in this cluster',
+    chipDistill: 'Synthesis',
+    chipDistillTitle: 'Generate a cross-synthesis of this cluster',
+    addRacimo: 'New cluster',
+    modalNewUvaTitle: 'New grape in',
+    modalNewUvaSub: 'You\'ll start a new conversation with Claude on this topic.',
+    labelUvaTitle: 'Grape title',
+    labelFirstQuestion: 'Your first question',
+    placeholderUvaTitle: 'e.g., How to plan the trip',
+    placeholderQuestion: 'What do you want to ask?',
+    btnCancel: 'Cancel',
+    btnCreate: 'Create and request response',
+    modalBifTitle: 'Branch sub-conversation',
+    modalBifSubPrefix: 'The new grape inherits the full context of "',
+    modalBifSubSuffix: '". Use it when you want to explore a tangent without polluting the main thread.',
+    labelBifSeed: 'Branching from this Claude response:',
+    labelSubTitle: 'Sub-branch title',
+    labelSubQuestion: 'Your first question for the sub-branch',
+    placeholderSubTitle: 'e.g., Going deeper into subtopic X',
+    placeholderSubQuestion: 'What do you want to explore from here?',
+    btnBifurcateAsk: 'Branch and ask',
+    distillModalTitlePrefix: 'Cluster synthesis: ',
+    distillPreparing: 'Generating cross-synthesis…',
+    btnDownloadMd: 'Download .md',
+    btnCopy: 'Copy',
+    btnClose: 'Close',
+    modalNewRacimoTitle: 'Create a new cluster',
+    modalNewRacimoSub: 'Clusters group your grapes by theme or life area.',
+    labelClusterName: 'Cluster name',
+    placeholderClusterName: 'e.g., Health, Family, Side project, Investments…',
+    labelColor: 'Color',
+    btnCreateCluster: 'Create cluster',
+    noMatches: 'No grape matches your search.',
+    parentLinkPrefix: 'sub-branch of',
+    persistHint: 'Grapes, conversations, notes and syntheses are saved automatically in your browser.',
+    citePreviewDivider: 'PREVIEW IN CHAT',
+    citePreviewMessage: 'I wanted to come back to this with you: can we go deeper and apply what we discussed to my current situation?',
+    citePreviewAlsoSee: 'We also talked about this:',
+    countSingular: 'grape',
+    countPlural: 'grapes',
+    conversationsLabel: 'conversations',
+    standaloneNote: 'Pre-cached for standalone mode. In live mode, this text is generated dynamically from the full cluster content.',
+    standaloneFallback: '*[Standalone mode]* Claude\'s response would appear here. To see it generated live, open the prototype inside an environment with a connection to the model. The pre-loaded grapes show examples of the expected format.',
+    floatingBifBtn: 'Branch selection',
+    bifBtnTitle: 'Branch into a sub-conversation, carrying all the context with it',
+    distillNoCluster: '*[Standalone mode]* Live synthesis is not available in this environment. The pre-loaded grapes in the Work, Personal and Learning clusters show a pre-generated synthesis that illustrates the format.',
+    needCustomClustersAtLeast2: 'You need at least 2 grapes in your cellar to prepare a tasting.',
+    confirmAtLeastOne: 'Pick at least one grape.',
+    sendingLabel: 'Sending…',
+    bifTermQuestion: 'Go deeper into',
+    bifTermQuestionEnd: '. What is it, why does it matter, and what should I know first?',
+    bifSelectionPrompt: 'Go deeper into this fragment I selected: "',
+    bifSelectionPromptEnd: '". What\'s behind it?',
+    bifSelectionTitleDots: '…',
+    msgPlaceholderEmpty: '(no initial question)',
+    msgPlaceholderClaude: '(waiting for first response)',
+    bifTermTitlePrefix: 'Branch: go deeper into "'
+  },
+  es: {
+    proposalTitle: 'Racimo de Conversaciones',
+    proposalSubtitle: 'Una propuesta de navegación espacial para conversaciones con LLMs',
+    proposalAbstract: 'Tres ideas integradas: (1) las conversaciones viven como uvas agrupadas en racimos por tema, no como un scroll lineal; (2) cualquier respuesta puede bifurcarse en una sub-rama que hereda todo el contexto del padre; (3) la destilación de un racimo es un output de primera clase, descargable y persistente. Demo navegable a continuación.',
+    introHeader: 'Tres acciones para explorar la idea:',
+    introItem1: '<strong>Pincha cualquier uva</strong> para abrir su conversación. Cada uva es un chat con Claude sobre un tema concreto.',
+    introItem2: '<strong>Pincha una palabra <span class="intro-resaltado">resaltada</span></strong> dentro de una respuesta — o selecciona cualquier fragmento de texto — para bifurcar una sub-rama que hereda el contexto del padre.',
+    introItem3: '<strong>Pulsa "Síntesis"</strong> sobre un racimo (en la barra de chips arriba del lienzo) para destilar todas sus uvas en un texto cuidado y descargable.',
+    introFoot: 'El icono del ojo en el buscador apaga los resaltados si prefieres leer en limpio. Tu progreso se guarda en este navegador.',
+    searchPlaceholder: 'Buscar por título, pregunta o respuesta…',
+    marksOn: 'Resaltados',
+    marksOff: 'Lectura limpia',
+    marksOnTitle: 'Ocultar los conceptos resaltados (modo lectura limpia)',
+    marksOffTitle: 'Volver a mostrar los conceptos resaltados',
+    langToggleLabel: 'EN',
+    langToggleTitle: 'Cambiar a inglés',
+    dialogEmpty: 'Pincha cualquier uva del lienzo de arriba para abrir su conversación. Las respuestas con palabras resaltadas se pueden bifurcar.',
+    btnBifurcate: 'Bifurcar',
+    btnCite: 'Citar',
+    btnBifurcateFromHere: 'Bifurcar desde aquí',
+    btnBifurcateFromHereTitle: 'Crear sub-rama tomando esta respuesta como contexto inicial',
+    btnSend: 'Enviar',
+    chatInputPlaceholder: 'Continúa la conversación con esta uva…',
+    notesHeader: 'Mis notas sobre esta uva',
+    notesPlaceholder: 'Añade un pensamiento, una pregunta pendiente, una idea para retomar…',
+    notesSaved: 'guardado',
+    chipUva: 'Uva',
+    chipUvaTitle: 'Crear nueva uva en este racimo',
+    chipDistill: 'Síntesis',
+    chipDistillTitle: 'Generar una síntesis cruzada de este racimo',
+    addRacimo: 'Nuevo racimo',
+    modalNewUvaTitle: 'Nueva uva en',
+    modalNewUvaSub: 'Empezarás una conversación nueva con Claude sobre este tema.',
+    labelUvaTitle: 'Título de la uva',
+    labelFirstQuestion: 'Tu primera pregunta',
+    placeholderUvaTitle: 'ej. Cómo organizar el viaje',
+    placeholderQuestion: '¿Qué quieres preguntar?',
+    btnCancel: 'Cancelar',
+    btnCreate: 'Crear y pedir respuesta',
+    modalBifTitle: 'Bifurcar sub-rama',
+    modalBifSubPrefix: 'La nueva uva hereda todo el contexto de "',
+    modalBifSubSuffix: '". Úsalo cuando quieras explorar una tangente sin contaminar el hilo principal.',
+    labelBifSeed: 'Bifurcando a partir de esta respuesta de Claude:',
+    labelSubTitle: 'Título de la sub-rama',
+    labelSubQuestion: 'Tu primera pregunta para la sub-rama',
+    placeholderSubTitle: 'ej. Profundizar en el subtema X',
+    placeholderSubQuestion: '¿Qué quieres explorar a partir de aquí?',
+    btnBifurcateAsk: 'Bifurcar y preguntar',
+    distillModalTitlePrefix: 'Síntesis del racimo: ',
+    distillPreparing: 'Generando síntesis cruzada…',
+    btnDownloadMd: 'Descargar .md',
+    btnCopy: 'Copiar',
+    btnClose: 'Cerrar',
+    modalNewRacimoTitle: 'Crear un nuevo racimo',
+    modalNewRacimoSub: 'Los racimos agrupan tus uvas por tema o área de vida.',
+    labelClusterName: 'Nombre del racimo',
+    placeholderClusterName: 'ej. Salud, Familia, Side project, Inversiones…',
+    labelColor: 'Color',
+    btnCreateCluster: 'Crear racimo',
+    noMatches: 'Ninguna uva coincide con tu búsqueda.',
+    parentLinkPrefix: 'sub-rama de',
+    persistHint: '<span data-i18n="persistHint">Las uvas, las conversaciones, las notas y las síntesis se guardan automáticamente en tu navegador.</span>',
+    citePreviewDivider: 'VISTA PREVIA EN EL CHAT',
+    citePreviewMessage: 'Quería retomar esto contigo: ¿podemos profundizar y aplicar lo que vimos a mi situación actual?',
+    citePreviewAlsoSee: 'También conversamos sobre esto:',
+    countSingular: 'uva',
+    countPlural: 'uvas',
+    conversationsLabel: 'conversaciones',
+    standaloneNote: 'Síntesis pre-cargada para modo standalone. En live mode, este texto se genera dinámicamente desde el contenido completo del racimo.',
+    standaloneFallback: '*[Modo standalone]* Aquí aparecería la respuesta de Claude. Para verla generarse en vivo, abre el prototipo dentro de un entorno con conexión al modelo. Las uvas pre-cargadas muestran ejemplos del formato esperado.',
+    floatingBifBtn: 'Bifurcar selección',
+    bifBtnTitle: 'Bifurca una sub-rama desde esta uva, llevándose todo el contexto',
+    distillNoCluster: '*[Modo standalone]* La síntesis en vivo no está disponible en este entorno. Las uvas pre-cargadas en los racimos Trabajo, Personal y Aprendizaje muestran una síntesis pre-generada que ilustra el formato.',
+    sendingLabel: 'Enviando…',
+    bifTermQuestion: 'Profundiza en',
+    bifTermQuestionEnd: '. ¿Qué es, por qué importa, y qué debería saber primero?',
+    bifSelectionPrompt: 'Profundiza en este fragmento que destaqué: "',
+    bifSelectionPromptEnd: '". ¿Qué hay detrás?',
+    bifSelectionTitleDots: '…',
+    msgPlaceholderEmpty: '(sin pregunta inicial)',
+    msgPlaceholderClaude: '(esperando primera respuesta)',
+    bifTermTitlePrefix: 'Bifurcar: profundizar en "'
+  }
+};
+
+let currentLang = (typeof _initialLang !== 'undefined') ? _initialLang : 'en';
+
+function t(key) {
+  return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) || (TRANSLATIONS.en && TRANSLATIONS.en[key]) || key;
+}
+
+function clusterLabel(name) {
+  if (CLUSTER_LABELS[name] && CLUSTER_LABELS[name][currentLang]) return CLUSTER_LABELS[name][currentLang];
+  return name; // custom clusters use their user-given name as-is
+}
+
+function applyStaticTranslations() {
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key] != null) {
+      el.innerHTML = TRANSLATIONS[currentLang][key];
+    }
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    if (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key] != null) {
+      el.placeholder = TRANSLATIONS[currentLang][key];
+    }
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.dataset.i18nTitle;
+    if (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key] != null) {
+      el.title = TRANSLATIONS[currentLang][key];
+    }
+  });
+}
+
+function initializeDataFromTemplate() {
+  // Clear non-custom uvas
+  Object.keys(data).forEach(k => {
+    if (!data[k].custom) delete data[k];
+  });
+  // Re-add from current-language templates
+  const template = INITIAL_UVAS_TEMPLATES[currentLang] || INITIAL_UVAS_TEMPLATES.es;
+  template.forEach(u => {
+    if (!data[u.id]) {
+      data[u.id] = Object.assign({}, u, CLUSTERS[u.cluster]);
+    }
+  });
+}
+
+function setLanguage(lang) {
+  if (lang !== 'en' && lang !== 'es') return;
+  currentLang = lang;
+  try { localStorage.setItem('racimo_lang_v1', lang); } catch(e) {}
+  initializeDataFromTemplate();
+  applyStaticTranslations();
+  renderAll();
+  if (currentId) selectGrape(currentId, false);
+  updateMarksToggleLabel();
+  updateLangToggleLabel();
+  updateSelectionBtnLabel();
+}
+
+function updateMarksToggleLabel() {
+  const lbl = document.getElementById('marks-toggle-label');
+  if (lbl) lbl.textContent = showMarks ? t('marksOn') : t('marksOff');
+  const tgl = document.getElementById('marks-toggle');
+  if (tgl) tgl.title = showMarks ? t('marksOnTitle') : t('marksOffTitle');
+}
+
+function updateLangToggleLabel() {
+  const lbl = document.getElementById('lang-toggle-label');
+  if (lbl) lbl.textContent = t('langToggleLabel');
+  const tgl = document.getElementById('lang-toggle');
+  if (tgl) tgl.title = t('langToggleTitle');
+}
+
+function updateSelectionBtnLabel() {
+  const btn = document.getElementById('selection-bif-btn');
+  if (btn) {
+    // Rebuild text content while preserving svg
+    const svg = btn.querySelector('svg');
+    btn.innerHTML = '';
+    if (svg) btn.appendChild(svg);
+    btn.appendChild(document.createTextNode(' ' + t('floatingBifBtn')));
+  }
 }
 
 // ============ 3D GRAPE GRADIENTS ============
@@ -1167,7 +1520,7 @@ function renderLabels() {
     t.setAttribute('x', cfg.centerX);
     t.setAttribute('y', maxY + 35);
     t.setAttribute('class', 'cluster-label');
-    t.textContent = name;
+    t.textContent = clusterLabel(name);
     labelsLayer.appendChild(t);
   });
   // Adjust viewBox if labels go too far down
@@ -1244,25 +1597,24 @@ function renderClusterBar() {
     chip.className = 'cluster-chip';
     chip.innerHTML = `
       <span class="chip-dot" style="background:${cfg.fill}"></span>
-      <span class="chip-name">${name}</span>
-      <button class="chip-btn" data-action="new" data-cluster="${name}" title="Crear nueva uva en este racimo">
+      <span class="chip-name">${clusterLabel(name)}</span>
+      <button class="chip-btn" data-action="new" data-cluster="${name}" title="${t('chipUvaTitle')}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Uva
+        ${t('chipUva')}
       </button>
-      <button class="chip-btn" data-action="distill" data-cluster="${name}" title="Generar una síntesis cruzada de este racimo">
+      <button class="chip-btn" data-action="distill" data-cluster="${name}" title="${t('chipDistillTitle')}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Síntesis
+        ${t('chipDistill')}
       </button>
     `;
     bar.appendChild(chip);
   });
-  // "+ Nuevo racimo" chip
   const addChip = document.createElement('div');
   addChip.className = 'cluster-chip add-chip';
   addChip.id = 'add-racimo-chip';
   addChip.innerHTML = `
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    <span>Nuevo racimo</span>
+    <span>${t('addRacimo')}</span>
   `;
   bar.appendChild(addChip);
 }
@@ -1343,7 +1695,7 @@ function renderChatHistory(id) {
     if (m.role === 'claude') {
       const actions = document.createElement('div');
       actions.className = 'msg-actions';
-      actions.innerHTML = '<button class="msg-bif-btn" data-msg-idx="' + idx + '" title="Crear sub-rama tomando esta respuesta como semilla"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg> Bifurcar desde aquí</button>';
+      actions.innerHTML = '<button class="msg-bif-btn" data-msg-idx="' + idx + '" title="Crear sub-rama tomando esta respuesta como semilla"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg> ' + t('btnBifurcateFromHere') + '</button>';
       chatHistory.appendChild(actions);
     }
   });
@@ -1373,22 +1725,22 @@ function selectGrape(id, animate) {
   dialogContent.style.display = 'block';
   dialogBadge.style.background = d.badge;
   dialogBadge.style.color = d.textColor;
-  dialogBadge.textContent = d.cluster;
+  dialogBadge.textContent = clusterLabel(d.cluster);
   dialogTitle.textContent = d.title;
 
   if (d.parent && data[d.parent]) {
     parentLink.style.display = 'inline-flex';
-    parentLink.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg> sub-rama de "${data[d.parent].title}"`;
+    parentLink.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg> ${t('parentLinkPrefix')} "${data[d.parent].title}"`;
     parentLink.onclick = () => selectGrape(d.parent, true);
   } else {
     parentLink.style.display = 'none';
   }
 
-  msgUser.textContent = d.u || '(sin pregunta inicial)';
+  msgUser.textContent = d.u || t('msgPlaceholderEmpty');
   if (d.c) {
     renderMarkedText(d.c, msgClaude, d.c);
   } else {
-    msgClaude.textContent = '(esperando primera respuesta)';
+    msgClaude.textContent = t('msgPlaceholderClaude');
   }
 
   renderChatHistory(id);
@@ -1407,7 +1759,7 @@ function showSimForCurrent() {
   if (!currentId) return;
   const d = data[currentId];
   document.getElementById('uc-stripe').style.background = d.stripe;
-  document.getElementById('uc-cluster').textContent = d.cluster + ' · ' + d.title.toLowerCase();
+  document.getElementById('uc-cluster').textContent = clusterLabel(d.cluster) + ' · ' + d.title.toLowerCase();
   document.getElementById('uc-title').textContent = d.title;
   document.getElementById('uc-snippet').textContent = d.c || '(uva sin contenido inicial)';
 
@@ -1417,7 +1769,7 @@ function showSimForCurrent() {
     const r = data[d.related];
     responseText.textContent = 'Claro. Tomando lo que conversamos en "' + d.title + '", te sugiero retomar la idea principal. Por cierto, esto se conecta con otra uva de tu racimo:';
     document.getElementById('cc-stripe').style.background = r.stripe;
-    document.getElementById('cc-cluster').textContent = r.cluster;
+    document.getElementById('cc-cluster').textContent = clusterLabel(r.cluster);
     document.getElementById('cc-title').textContent = r.title;
     document.getElementById('cc-snippet').textContent = r.c || '';
     ccWrap.style.display = 'block';
@@ -1519,7 +1871,7 @@ function runSearch(query) {
       g.classList.remove('search-match', 'dimmed', 'related');
     }
   });
-  searchCount.textContent = matches + (matches === 1 ? ' uva' : ' uvas');
+  searchCount.textContent = matches + ' ' + (matches === 1 ? t('countSingular') : t('countPlural'));
   searchCount.style.display = 'inline';
   noMatches.classList.toggle('show', matches === 0);
 }
@@ -1534,7 +1886,7 @@ let pendingNewCluster = null;
 
 function openNewUvaModal(cluster) {
   pendingNewCluster = cluster;
-  document.getElementById('new-cluster-name').textContent = cluster;
+  document.getElementById('new-cluster-name').textContent = clusterLabel(cluster);
   document.getElementById('new-uva-title').value = '';
   document.getElementById('new-uva-question').value = '';
   modalNew.classList.add('show');
@@ -1715,10 +2067,10 @@ function formatDate(d) {
 async function distillCluster(cluster) {
   modalDistill.classList.add('show');
   const inCluster = Object.values(data).filter(u => u.cluster === cluster);
-  document.getElementById('distill-cluster-name').textContent = 'Síntesis del racimo: ' + cluster;
-  document.getElementById('distill-meta').textContent = formatDate(new Date()) + ' · ' + inCluster.length + ' conversaciones';
+  document.getElementById('distill-cluster-name').textContent = t('distillModalTitlePrefix') + clusterLabel(cluster);
+  document.getElementById('distill-meta').textContent = formatDate(new Date()) + ' · ' + inCluster.length + ' ' + t('conversationsLabel');
   const body = document.getElementById('distill-body');
-  body.textContent = 'Generando síntesis cruzada...';
+  body.textContent = t('distillPreparing');
   document.getElementById('distill-download').disabled = true;
   document.getElementById('distill-copy').disabled = true;
 
@@ -1749,18 +2101,18 @@ async function distillCluster(cluster) {
   let synthText = reply;
   let isFallback = false;
   if (!synthText) {
-    if (DEMO_SYNTHESES[cluster]) {
-      synthText = DEMO_SYNTHESES[cluster];
+    if (DEMO_SYNTHESES_FOR(cluster)) {
+      synthText = DEMO_SYNTHESES_FOR(cluster);
       isFallback = true;
     } else {
-      synthText = '*[Modo standalone]* La síntesis en vivo no está disponible en este entorno. Las uvas pre-cargadas en los racimos Trabajo, Personal y Aprendizaje muestran una síntesis pre-generada que ilustra el formato.';
+      synthText = t('distillNoCluster');
     }
   }
   body.innerHTML = '';
   if (isFallback) {
     const note = document.createElement('div');
     note.style.cssText = 'font-size: 11px; color: #5F5E5A; font-style: italic; margin-bottom: 12px; padding: 8px 10px; background: #FAFAF7; border-radius: 6px; border-left: 2px solid #B4B2A9; line-height: 1.5;';
-    note.textContent = 'Síntesis pre-cargada para modo standalone. En live mode, este texto se genera dinámicamente desde el contenido completo del racimo.';
+    note.textContent = t('standaloneNote');
     body.appendChild(note);
   }
   synthText.split(/\n/).forEach(line => {
@@ -1834,11 +2186,11 @@ document.body.addEventListener('click', (e) => {
   if (document.body.classList.contains('marks-hidden')) return;
   const term = e.target.closest('.bif-term');
   if (!term || !currentId) return;
-  const t = term.dataset.term || term.textContent;
+  const termText = term.dataset.term || term.textContent;
   const ctx = term.dataset.context || '';
   openBifurcarModal(ctx);
-  document.getElementById('bif-title').value = t;
-  document.getElementById('bif-question').value = 'Profundiza en "' + t + '". ¿Qué es, por qué importa, y qué debería saber primero?';
+  document.getElementById('bif-title').value = termText;
+  document.getElementById('bif-question').value = t('bifTermQuestion') + ' "' + termText + '"' + t('bifTermQuestionEnd');
   setTimeout(() => document.getElementById('bif-question').focus(), 60);
 });
 
@@ -1846,7 +2198,7 @@ document.body.addEventListener('click', (e) => {
 
 const selectionBtn = document.createElement('button');
 selectionBtn.id = 'selection-bif-btn';
-selectionBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg> Bifurcar selección';
+selectionBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg> ' + t('floatingBifBtn');
 document.body.appendChild(selectionBtn);
 let pendingSelection = null;
 
@@ -1894,7 +2246,7 @@ selectionBtn.addEventListener('click', () => {
   hideSelectionBtn();
   openBifurcarModal(text);
   document.getElementById('bif-title').value = title;
-  document.getElementById('bif-question').value = 'Profundiza en este fragmento que destaqué: "' + text + '". ¿Qué hay detrás?';
+  document.getElementById('bif-question').value = t('bifSelectionPrompt') + text + t('bifSelectionPromptEnd');
   setTimeout(() => document.getElementById('bif-question').focus(), 60);
 });
 
@@ -1989,7 +2341,15 @@ notesInput.addEventListener('input', () => {
 
 // ============ BOOT ============
 
+applyStaticTranslations();
+updateMarksToggleLabel();
+updateLangToggleLabel();
+updateSelectionBtnLabel();
 renderAll();
+
+document.getElementById('lang-toggle').addEventListener('click', () => {
+  setLanguage(currentLang === 'es' ? 'en' : 'es');
+});
 
 let _resizeT = null;
 window.addEventListener('resize', () => {
