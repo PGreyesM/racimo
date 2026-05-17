@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Racimo de Conversaciones — Propuesta de UX</title>
 <style>
 :root { color-scheme: light; }
@@ -21,6 +22,51 @@ body {
 .proposal-abstract { font-size: 13px; color: #444441; line-height: 1.6; margin: 0; max-width: 640px; }
 .intro { font-size: 12px; color: #888780; margin: 0 0 10px; text-align: center; font-style: italic; }
 .intro b { color: #1A1A19; font-weight: 500; }
+
+.how-to-use {
+  background: #FAFAF7;
+  border: 0.5px solid rgba(0,0,0,0.1);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 0 0 14px;
+}
+.intro-header {
+  font-size: 13px;
+  color: #5F5E5A;
+  margin: 0 0 10px;
+  font-weight: 500;
+}
+.how-to-list {
+  margin: 0 0 0 0;
+  padding: 0 0 0 22px;
+  font-size: 13px;
+  color: #1A1A19;
+  line-height: 1.6;
+}
+.how-to-list li {
+  margin-bottom: 6px;
+}
+.how-to-list li:last-child {
+  margin-bottom: 0;
+}
+.how-to-list strong {
+  font-weight: 500;
+}
+.intro-resaltado {
+  background: rgba(127,119,221,0.16);
+  padding: 0 4px;
+  border-radius: 3px;
+  border-bottom: 1px dashed rgba(83,74,183,0.55);
+  font-weight: 500;
+}
+.intro-foot {
+  font-size: 12px;
+  color: #5F5E5A;
+  margin: 10px 0 0;
+  font-style: italic;
+  padding-top: 8px;
+  border-top: 0.5px solid rgba(0,0,0,0.08);
+}
 
 .search-bar {
   display: flex; align-items: center; gap: 8px;
@@ -298,43 +344,6 @@ body.marks-hidden .bif-term::after { display: none; }
 .color-swatch:hover { transform: scale(1.1); }
 .color-swatch.selected { border-color: #1A1A19; }
 
-.wine-modal {
-  background: #FFFDF7 !important;
-  border: 0.5px solid #F0D58C;
-}
-.wine-cap {
-  text-align: center; padding: 6px 0 2px;
-  color: #BA7517;
-}
-.wine-cap svg { width: 28px; height: 28px; }
-.wine-label {
-  text-align: center;
-  margin-bottom: 16px;
-  padding-bottom: 14px;
-  border-bottom: 0.5px solid rgba(186, 117, 23, 0.3);
-}
-.wine-kicker {
-  font-size: 10px; letter-spacing: 3px; color: #BA7517;
-  font-weight: 500; margin-bottom: 6px;
-}
-.wine-name {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 24px; font-weight: 400;
-  color: #4A1B0C; margin: 0; letter-spacing: 0.5px;
-}
-.wine-meta { font-size: 12px; color: #854F0B; margin-top: 6px; font-style: italic; }
-.wine-body {
-  background: transparent;
-  border: none;
-  padding: 0 4px;
-  font-size: 13px;
-  line-height: 1.7;
-  color: #2C2C2A;
-  white-space: pre-wrap;
-  max-height: 50vh;
-  overflow-y: auto;
-}
-.wine-body strong { color: #4A1B0C; font-weight: 500; }
 
 .cellar { margin-top: 18px; }
 .cellar-list {
@@ -410,25 +419,6 @@ body.marks-hidden .bif-term::after { display: none; }
 .fiesta-btn:active { transform: scale(0.97); }
 .fiesta-btn svg { width: 14px; height: 14px; }
 
-.fiesta-wine-pick {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 9px 12px;
-  background: #FFFDF7;
-  border: 0.5px solid #F0D58C;
-  border-radius: 6px;
-  margin-bottom: 6px;
-  cursor: pointer;
-  transition: border-color .15s, background .15s;
-}
-.fiesta-wine-pick:hover { border-color: #BA7517; }
-.fiesta-wine-pick.selected { background: #FAEEDA; border-color: #EF9F27; }
-.fiesta-wine-pick input[type=checkbox] { margin: 3px 0 0; cursor: pointer; flex-shrink: 0; accent-color: #4A1B0C; }
-.fiesta-wine-pick-content { flex: 1; min-width: 0; }
-.fiesta-wine-pick-name { font-family: Georgia, serif; font-size: 14px; color: #4A1B0C; }
-.fiesta-wine-pick-meta { font-size: 10px; color: #854F0B; font-style: italic; margin-top: 2px; }
-.fiesta-wine-pick-snippet { font-size: 11px; color: #5F5E5A; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 .fiesta-toggle-row {
   display: flex; align-items: center; gap: 8px;
   margin: 12px 0 4px;
@@ -542,6 +532,93 @@ body.marks-hidden .bif-term::after { display: none; }
   max-height: 50vh; overflow-y: auto;
 }
 .distill-meta { font-size: 11px; color: #5F5E5A; margin-bottom: 8px; }
+
+@media (max-width: 640px) {
+  body { font-size: 13px; }
+  .container { padding: 14px 10px 30px; max-width: 100%; }
+
+  .proposal-header { margin: 0 0 14px; padding-bottom: 12px; }
+  .proposal-title { font-size: 20px; }
+  .proposal-subtitle { font-size: 13px; margin-bottom: 10px; }
+  .proposal-abstract { font-size: 12px; line-height: 1.55; }
+
+  .how-to-use { padding: 12px 13px; margin-bottom: 12px; }
+  .intro-header { font-size: 12px; margin-bottom: 8px; }
+  .how-to-list { font-size: 12px; padding-left: 18px; line-height: 1.5; }
+  .how-to-list li { margin-bottom: 5px; }
+  .intro-foot { font-size: 11px; margin-top: 8px; padding-top: 6px; }
+
+  .search-bar { flex-wrap: wrap; padding: 7px 10px; gap: 6px; }
+  .search-bar input { width: 100%; order: 2; padding: 4px 0; }
+  .search-bar > svg { order: 1; }
+  .search-count { order: 3; font-size: 10px; padding-left: 4px; }
+  .search-clear { order: 4; }
+  .search-divider { display: none; }
+  .marks-toggle { order: 5; padding: 3px 8px; margin-left: auto; }
+  .marks-toggle span { display: inline; }
+
+  .cluster-bar { gap: 6px; margin-bottom: 10px; }
+  .cluster-chip { padding: 5px 8px; font-size: 11px; gap: 5px; }
+  .cluster-chip .chip-name { font-size: 11px; margin-right: 2px; }
+  .chip-btn { padding: 2px 4px; font-size: 10px; gap: 2px; }
+  .chip-btn svg { width: 11px; height: 11px; }
+
+  .canvas-area { padding: 8px; margin-bottom: 8px; }
+
+  .dialog { padding: 12px 13px; min-height: 120px; }
+  .dialog-header { gap: 6px; margin-bottom: 10px; }
+  .dh-left, .dh-right { gap: 6px; }
+  .badge { font-size: 10px; padding: 2px 7px; }
+  .title { font-size: 13px; }
+  .btn { padding: 5px 9px; font-size: 11px; }
+  .btn svg { width: 12px; height: 12px; }
+  .parent-link { font-size: 10px; }
+
+  .msg { padding: 9px 10px; font-size: 12px; line-height: 1.5; }
+  .chat-input-row { padding: 5px 5px 5px 10px; }
+  .chat-input-row input { font-size: 12px; }
+  .send-btn { padding: 5px 9px; font-size: 11px; }
+  .send-btn svg { width: 11px; height: 11px; }
+
+  .notes-head { font-size: 10px; }
+  .notes textarea { font-size: 12px; padding: 6px 8px; }
+
+  .modal { padding: 16px; max-width: 100%; max-height: 90vh; }
+  .modal h3 { font-size: 15px; }
+  .modal-sub { font-size: 11px; }
+  .modal label { font-size: 11px; }
+  .modal input[type=text], .modal textarea { font-size: 13px; padding: 7px 9px; }
+  .modal-actions { gap: 6px; }
+
+  .distill-body { padding: 12px 13px; font-size: 12px; line-height: 1.55; max-height: 55vh; }
+
+  .legend { gap: 12px; font-size: 11px; flex-wrap: wrap; padding: 2px 0 4px; }
+  .persist-hint { font-size: 10px; padding: 8px 0 0; }
+  .persist-hint svg { width: 11px; height: 11px; }
+
+  #selection-bif-btn { font-size: 10px; padding: 5px 9px; }
+  #selection-bif-btn svg { width: 11px; height: 11px; }
+
+  .cited-card { font-size: 11px; }
+  .ct { font-size: 12px; }
+  .cs { font-size: 11px; }
+
+  .msg-bif-btn { font-size: 10px; padding: 3px 7px; }
+
+  .color-swatch { width: 26px; height: 26px; }
+
+  .divider { font-size: 9px; padding: 8px 0 6px; }
+  .divider::before, .divider::after { width: 40px; }
+
+  .bubble-u, .bubble-c { padding: 10px; max-width: 92%; }
+}
+
+@media (max-width: 380px) {
+  .container { padding: 10px 6px 24px; }
+  .proposal-title { font-size: 18px; }
+  .cluster-chip .chip-name { display: none; }
+  .cluster-chip { padding: 4px 7px; }
+}
 </style>
 </head>
 <body>
@@ -552,7 +629,15 @@ body.marks-hidden .bif-term::after { display: none; }
   <p class="proposal-subtitle">Una propuesta de navegación espacial para conversaciones con LLMs</p>
   <p class="proposal-abstract">Tres ideas integradas: (1) las conversaciones viven como uvas agrupadas en racimos por tema, no como un scroll lineal; (2) cualquier respuesta puede bifurcarse en una sub-rama que hereda todo el contexto del padre; (3) la destilación de un racimo es un output de primera clase, descargable y persistente. Demo navegable a continuación.</p>
 </div>
-<p class="intro">Pincha una uva. Selecciona cualquier frase o usa los conceptos <span style="background:rgba(127,119,221,0.16);padding:0 4px;border-radius:3px;border-bottom:1px dashed rgba(83,74,183,0.55);">resaltados</span> para bifurcar en sub-ramas. El icono del ojo en el buscador alterna entre lectura limpia y resaltada.</p>
+<div class="how-to-use">
+  <p class="intro-header">Tres acciones para explorar la idea:</p>
+  <ol class="how-to-list">
+    <li><strong>Pincha cualquier uva</strong> para abrir su conversación. Cada uva es un chat con Claude sobre un tema concreto.</li>
+    <li><strong>Pincha una palabra <span class="intro-resaltado">resaltada</span></strong> dentro de una respuesta — o selecciona cualquier fragmento de texto — para bifurcar una sub-rama que hereda el contexto del padre.</li>
+    <li><strong>Pulsa "Síntesis"</strong> sobre un racimo (en la barra de chips arriba del lienzo) para destilar todas sus uvas en un texto cuidado y descargable.</li>
+  </ol>
+  <p class="intro-foot">El icono del ojo en el buscador apaga los resaltados si prefieres leer en limpio. Tu progreso se guarda en este navegador.</p>
+</div>
 
 <div class="search-bar">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -590,7 +675,7 @@ body.marks-hidden .bif-term::after { display: none; }
 <div class="dialog">
   <div class="dialog-empty" id="dialog-empty">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.92 3.5a8.5 8.5 0 1 1-3.42 12.5"/><path d="M3 12l5-5"/><path d="M3 12l5 5"/></svg>
-    <span>Pincha una uva para abrir esa conversación.</span>
+    <span>Pincha cualquier uva del lienzo de arriba para abrir su conversación. Las respuestas con palabras resaltadas se pueden bifurcar.</span>
   </div>
   <div id="dialog-content" style="display: none;">
     <div class="dialog-header">
@@ -691,7 +776,7 @@ body.marks-hidden .bif-term::after { display: none; }
 
 <div class="persist-hint">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg>
-  Las uvas, los chats, las notas y los vinos viven en este artifact.
+  Las uvas, las conversaciones, las notas y las síntesis se guardan automáticamente en tu navegador.
 </div>
 
 
@@ -938,7 +1023,8 @@ function saveChatHistory(id, h) {
 }
 
 function radiusFor(id, isSubbranch) {
-  const base = isSubbranch ? 12 : 18;
+  const mobileBoost = window.innerWidth < 640 ? 5 : 0;
+  const base = (isSubbranch ? 12 : 18) + mobileBoost;
   const h = getChatHistory(id);
   return Math.min(base + h.length * 0.7, base + 8);
 }
@@ -1904,6 +1990,12 @@ notesInput.addEventListener('input', () => {
 // ============ BOOT ============
 
 renderAll();
+
+let _resizeT = null;
+window.addEventListener('resize', () => {
+  clearTimeout(_resizeT);
+  _resizeT = setTimeout(() => { renderAll(); if (currentId) selectGrape(currentId, false); }, 200);
+});
 
 window.addEventListener('DOMContentLoaded', () => {
   let lastId = null;
