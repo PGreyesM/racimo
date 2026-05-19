@@ -1403,9 +1403,81 @@ body.focus-mode #window-dock::before {
   pointer-events: none;
 }
 
+
+/* === Banner mobile (solo aparece en viewport pequeño) === */
+#mobile-banner { display: none; }
+@media (max-width: 760px) {
+  #mobile-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    z-index: 300;
+    background: white;
+    border: 0.5px solid rgba(0,0,0,0.12);
+    border-left: 3px solid #7F77DD;
+    border-radius: 10px;
+    padding: 10px 12px 10px 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.05);
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: #1A1A19;
+    flex-wrap: wrap;
+  }
+  #mobile-banner .mb-text {
+    flex: 1 1 180px;
+    min-width: 0;
+  }
+  #mobile-banner .mb-text strong {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  #mobile-banner .mb-text span {
+    color: #5F5E5A;
+    font-size: 11.5px;
+  }
+  #mobile-banner .mb-link {
+    background: #534AB7;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  #mobile-banner .mb-link:hover { background: #3C3489; }
+  #mobile-banner .mb-close {
+    width: 22px;
+    height: 22px;
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    line-height: 1;
+    color: #888780;
+    cursor: pointer;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  #mobile-banner .mb-close:hover { background: rgba(0,0,0,0.06); color: #1A1A19; }
+}
 </style>
 </head>
 <body>
+<!-- Banner mobile: el lienzo cascada está pensado para escritorio -->
+<div id="mobile-banner" role="note">
+  <div class="mb-text">
+    <strong>Esta versión está pensada para pantalla amplia.</strong>
+    <span>Para móvil, abre la versión sobria del prototipo.</span>
+  </div>
+  <a class="mb-link" href="racimo-sobrio.html">Abrir versión móvil →</a>
+  <button class="mb-close" type="button" aria-label="Cerrar aviso" onclick="document.getElementById('mobile-banner').style.display='none'">×</button>
+</div>
   <div class="app">
     <aside class="sidebar">
 <div class="proposal-header">
