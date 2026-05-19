@@ -2397,4 +2397,9 @@ window.addEventListener('DOMContentLoaded', () => {
     selectGrape(lastId, false);
     let simOpen = null;
     try { simOpen = localStorage.getItem(LS_SIM_OPEN); } catch (e) {}
-    if (simOpen === lastId) sho
+    if (simOpen === lastId) showSimForCurrent();
+  }
+});
+</script>
+</body>
+</html>
