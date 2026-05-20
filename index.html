@@ -13,13 +13,13 @@
   .app {
     display: grid;
     grid-template-columns: 240px minmax(0, 1fr);
-    grid-template-rows: 260px 1fr;
+    grid-template-rows: auto 1fr;
     grid-template-areas: "sidebar topright" "sidebar bottomright";
     gap: 10px;
     padding: 10px;
     min-height: 100vh;
   }
-  .sidebar { grid-area: sidebar; background: white; border: 0.5px solid rgba(0,0,0,0.12); border-radius: 12px; padding: 16px; overflow-y: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .sidebar { grid-area: sidebar; position: fixed; top: 10px; left: 10px; width: 240px; height: calc(100vh - 20px); z-index: 50; background: white; border: 0.5px solid rgba(0,0,0,0.12); border-radius: 12px; padding: 16px; overflow-y: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
   .top-right { grid-area: topright; background: white; border: 0.5px solid rgba(0,0,0,0.12); border-radius: 12px; padding: 12px; overflow: hidden; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
   .bottom-right { grid-area: bottomright; background: white; border: 0.5px solid rgba(0,0,0,0.12); border-radius: 12px; padding: 12px; overflow-y: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
   .sidebar .proposal-header { padding-right: 50px; position: relative; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 0.5px solid rgba(0,0,0,0.08); }
@@ -790,11 +790,11 @@ body.marks-hidden .bif-term::after { display: none; }
 /* === Racimo expansion (replaces 3D canvas) === */
 .racimo-expansion {
   flex: 1;
-  min-height: 0;
+  min-height: 200px;
   background: #FAFAF7;
   border-radius: 8px;
   padding: 14px;
-  overflow-y: auto;
+  overflow-y: visible;
   border: 0.5px dashed rgba(0,0,0,0.08);
 }
 .racimo-expansion-empty {
@@ -1023,7 +1023,7 @@ body.marks-hidden .bif-term::after { display: none; }
 
 /* === Free-floating windows across the whole viewport === */
 .window.is-stacked {
-  position: fixed !important;
+  position: absolute !important;
   top: 0;
   left: 0;
   width: 460px;
@@ -1061,7 +1061,7 @@ body.marks-hidden .bif-term::after { display: none; }
   overflow: hidden;
   transition: box-shadow .15s;
 }
-.window.is-stacked.dragging { cursor: grabbing; }
+.window.is-stacked.dragging { cursor: grabbing; transition: none !important; }
 .window-header {
   display: flex;
   align-items: center;
@@ -1404,6 +1404,40 @@ body.focus-mode #window-dock::before {
 }
 
 
+/* === Caja de respaldo (exportar / importar) === */
+.backup-box {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 0.5px solid rgba(0,0,0,0.08);
+}
+.backup-row { display: flex; gap: 6px; }
+.backup-row button {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-family: inherit;
+  font-weight: 500;
+  color: #534AB7;
+  background: white;
+  border: 0.5px solid rgba(83,74,183,0.35);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+.backup-row button:hover { background: #EEEDFE; border-color: #7F77DD; }
+.backup-row button svg { width: 12px; height: 12px; }
+.backup-note {
+  font-size: 9.5px;
+  color: #888780;
+  text-align: center;
+  margin-top: 5px;
+  line-height: 1.35;
+}
+
 /* === Banner mobile (solo aparece en viewport pequeño) === */
 #mobile-banner { display: none; }
 @media (max-width: 760px) {
@@ -1427,19 +1461,9 @@ body.focus-mode #window-dock::before {
     color: #1A1A19;
     flex-wrap: wrap;
   }
-  #mobile-banner .mb-text {
-    flex: 1 1 180px;
-    min-width: 0;
-  }
-  #mobile-banner .mb-text strong {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 2px;
-  }
-  #mobile-banner .mb-text span {
-    color: #5F5E5A;
-    font-size: 11.5px;
-  }
+  #mobile-banner .mb-text { flex: 1 1 180px; min-width: 0; }
+  #mobile-banner .mb-text strong { display: block; font-weight: 500; margin-bottom: 2px; }
+  #mobile-banner .mb-text span { color: #5F5E5A; font-size: 11.5px; }
   #mobile-banner .mb-link {
     background: #534AB7;
     color: white;
@@ -1466,6 +1490,136 @@ body.focus-mode #window-dock::before {
   }
   #mobile-banner .mb-close:hover { background: rgba(0,0,0,0.06); color: #1A1A19; }
 }
+
+/* === Botones de eliminar uva / chat === */
+.uva-card-delete {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #888780;
+  opacity: 0;
+  transition: opacity .12s, background .12s, color .12s;
+  z-index: 3;
+}
+.uva-card:hover .uva-card-delete { opacity: 1; }
+.uva-card-delete:hover { background: #FBE9E7; color: #C0392B; }
+.uva-card-delete svg { width: 12px; height: 12px; }
+.window-delete {
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: #888780;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+}
+.window-delete svg { width: 13px; height: 13px; }
+.window-delete:hover { background: #FBE9E7; color: #C0392B; }
+
+.window-branch {
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: #888780;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+}
+.window-branch svg { width: 13px; height: 13px; }
+.window-branch:hover { background: #EEEDFE; color: #534AB7; }
+
+/* === Seccion colapsable "Como funciona" === */
+.help-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 0.5px solid rgba(0,0,0,0.08);
+  padding: 8px 0;
+  margin-bottom: 10px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  color: #5F5E5A;
+  cursor: pointer;
+}
+.help-toggle:hover { color: #1A1A19; }
+.help-chevron { width: 13px; height: 13px; transition: transform .18s; flex-shrink: 0; }
+.help-toggle[aria-expanded="true"] .help-chevron { transform: rotate(180deg); }
+.help-collapsible { display: none; }
+.help-collapsible.is-open { display: block; }
+
+/* === Panel izquierdo contraible === */
+#sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 0 10px auto;
+  border: 0.5px solid rgba(0,0,0,0.12);
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #5F5E5A;
+  flex-shrink: 0;
+  padding: 0;
+}
+#sidebar-toggle:hover { background: #F1EFE8; color: #1A1A19; }
+#sidebar-toggle svg { width: 15px; height: 15px; transition: transform .18s; }
+.app.sidebar-collapsed { grid-template-columns: 52px minmax(0, 1fr); }
+.app.sidebar-collapsed .sidebar { padding: 12px 0; overflow: hidden; width: 52px; }
+.app.sidebar-collapsed .sidebar > *:not(#sidebar-toggle) { display: none; }
+.app.sidebar-collapsed #sidebar-toggle { margin: 0 auto; }
+.app.sidebar-collapsed #sidebar-toggle svg { transform: rotate(180deg); }
+
+/* Cordones punteados madre-hijo: retirados (la indentacion ya muestra la jerarquia) */
+#parent-child-cords-svg { display: none !important; }
+
+/* === Minimizar el panel de racimos === */
+#toppanel-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-end;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  color: #888780;
+  cursor: pointer;
+  padding: 2px 4px;
+  flex-shrink: 0;
+}
+#toppanel-toggle:hover { color: #1A1A19; }
+#toppanel-toggle .tp-chevron { width: 13px; height: 13px; transition: transform .18s; }
+.app.toppanel-collapsed #toppanel-toggle .tp-chevron { transform: rotate(180deg); }
+.app.toppanel-collapsed .top-right > *:not(#toppanel-toggle) { display: none; }
+.app.toppanel-collapsed .top-right { padding: 6px 12px; }
+.app.toppanel-collapsed #toppanel-toggle { align-self: center; }
 </style>
 </head>
 <body>
@@ -1475,11 +1629,14 @@ body.focus-mode #window-dock::before {
     <strong>Esta versión está pensada para pantalla amplia.</strong>
     <span>Para móvil, abre la versión sobria del prototipo.</span>
   </div>
-  <a class="mb-link" href="racimo-sobrio.html">Abrir versión móvil →</a>
-  <button class="mb-close" type="button" aria-label="Cerrar aviso" onclick="document.getElementById('mobile-banner').style.display='none'">×</button>
+  <a class="mb-link" href="racimo-sobrio.html">Abrir versión móvil &rarr;</a>
+  <button class="mb-close" type="button" aria-label="Cerrar aviso" onclick="document.getElementById('mobile-banner').style.display='none'">&times;</button>
 </div>
   <div class="app">
     <aside class="sidebar">
+<button id="sidebar-toggle" type="button" title="Contraer panel" aria-label="Contraer panel">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
 <div class="proposal-header">
   <button id="lang-toggle" title="Switch language">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -1487,9 +1644,14 @@ body.focus-mode #window-dock::before {
   </button>
   <h1 class="proposal-title" data-i18n="proposalTitle">Racimo de Conversaciones</h1>
   <p class="proposal-subtitle" data-i18n="proposalSubtitle">Una propuesta de navegación espacial para conversaciones con LLMs</p>
-  <p class="proposal-abstract" data-i18n="proposalAbstract">Tres ideas integradas: (1) las conversaciones viven como uvas agrupadas en racimos por tema, no como un scroll lineal; (2) cualquier respuesta puede bifurcarse en una sub-rama que hereda todo el contexto del padre; (3) la destilación de un racimo es un output de primera clase, descargable y persistente. Demo navegable a continuación.</p>
 </div>
-<div class="how-to-use">
+<button class="help-toggle" id="help-toggle" type="button" aria-expanded="false">
+  <span>&iquest;C&oacute;mo funciona?</span>
+  <svg class="help-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="help-collapsible" id="help-collapsible">
+  <p class="proposal-abstract" data-i18n="proposalAbstract">Tres ideas integradas: (1) las conversaciones viven como uvas agrupadas en racimos por tema, no como un scroll lineal; (2) cualquier respuesta puede bifurcarse en una sub-rama que hereda todo el contexto del padre; (3) la destilación de un racimo es un output de primera clase, descargable y persistente. Demo navegable a continuación.</p>
+  <div class="how-to-use">
   <p class="intro-header" data-i18n="introHeader">Tres acciones para explorar la idea:</p>
   <ol class="how-to-list">
     <li data-i18n="introItem1"><strong>Pincha cualquier uva</strong> para abrir su conversación. Cada uva es un chat con Claude sobre un tema concreto.</li>
@@ -1497,6 +1659,7 @@ body.focus-mode #window-dock::before {
     <li data-i18n="introItem3"><strong>Pulsa "Síntesis"</strong> sobre un racimo (en la barra de chips arriba del lienzo) para destilar todas sus uvas en un texto cuidado y descargable.</li>
   </ol>
   <p class="intro-foot" data-i18n="introFoot">El icono del ojo en el buscador apaga los resaltados si prefieres leer en limpio. Tu progreso se guarda en este navegador.</p>
+</div>
 </div>
 <div class="legend">
   <span><span class="dot" style="background: #7F77DD;"></span>Trabajo</span>
@@ -1507,9 +1670,27 @@ body.focus-mode #window-dock::before {
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg>
   <span data-i18n="persistHint">Las uvas, las conversaciones, las notas y las síntesis se guardan automáticamente en tu navegador.</span>
 </div>
+<div class="backup-box">
+  <div class="backup-row">
+    <button type="button" id="backup-export" title="Descarga todo tu Racimo como archivo .racimo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Exportar
+    </button>
+    <button type="button" id="backup-import" title="Restaura un respaldo .racimo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Importar
+    </button>
+  </div>
+  <div class="backup-note" id="backup-note">Respalda tu trabajo en un archivo .racimo</div>
+  <input type="file" id="backup-file-input" accept=".racimo,.json,application/json" style="display:none">
+</div>
 </aside>
 
     <section class="top-right">
+<button id="toppanel-toggle" type="button" title="Minimizar panel de racimos">
+  <span>Racimos</span>
+  <svg class="tp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
 <div class="search-bar">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Buscar por título, pregunta o respuesta..." autocomplete="off">
@@ -1881,6 +2062,14 @@ try {
   custom.forEach(u => { data[u.id] = Object.assign({}, u, CLUSTERS[u.cluster] || {}); });
 } catch (e) {}
 
+// Lista de uvas eliminadas (para que las built-in borradas no reaparezcan al recargar)
+let deletedUvaIds = new Set();
+try {
+  const _del = JSON.parse(localStorage.getItem('racimo_deleted_ids_v1') || '[]');
+  if (Array.isArray(_del)) _del.forEach(id => deletedUvaIds.add(id));
+} catch (e) {}
+deletedUvaIds.forEach(id => { delete data[id]; });
+
 function persistCustomUvas() {
   const custom = Object.values(data).filter(u => u.custom).map(u => ({
     id: u.id, cluster: u.cluster, cx: u.cx, cy: u.cy,
@@ -1888,6 +2077,62 @@ function persistCustomUvas() {
     createdAt: u.createdAt || null, custom: true
   }));
   try { localStorage.setItem(LS_CUSTOM, JSON.stringify(custom)); } catch (e) {}
+}
+
+function persistDeletedUvaIds() {
+  try { localStorage.setItem('racimo_deleted_ids_v1', JSON.stringify(Array.from(deletedUvaIds))); } catch (e) {}
+}
+
+// Devuelve todos los ids descendientes (sub-ramas, sub-sub-ramas...) de una uva
+function getUvaDescendants(uvaId) {
+  const out = [];
+  Object.values(data).forEach(u => {
+    if (u.parent === uvaId) {
+      out.push(u.id);
+      const deeper = getUvaDescendants(u.id);
+      for (let i = 0; i < deeper.length; i++) out.push(deeper[i]);
+    }
+  });
+  return out;
+}
+
+// Borra una uva y toda su descendencia, con confirmación y conteo
+function deleteUva(uvaId) {
+  if (!data[uvaId]) return;
+  const descendants = getUvaDescendants(uvaId);
+  const all = [uvaId].concat(descendants);
+  const n = descendants.length;
+  const titulo = (data[uvaId].title || 'esta uva');
+  let msg = 'Eliminar "' + titulo + '"';
+  if (n > 0) msg += ' y sus ' + n + ' sub-rama' + (n === 1 ? '' : 's');
+  msg += '?\n\nEsta accion no se puede deshacer.';
+  if (!confirm(msg)) return;
+
+  all.forEach(id => {
+    if (typeof closeWindow === 'function') { try { closeWindow(id); } catch (e) {} }
+    delete data[id];
+    try { localStorage.removeItem(LS_CHAT_PFX + id); } catch (e) {}
+    try { localStorage.removeItem(LS_NOTES_PFX + id); } catch (e) {}
+    if (typeof windowPositions === 'object' && windowPositions && windowPositions[id]) {
+      delete windowPositions[id];
+    }
+    if (typeof selectedUvas !== 'undefined' && selectedUvas && selectedUvas.delete) {
+      selectedUvas.delete(id);
+    }
+    deletedUvaIds.add(id);
+  });
+
+  persistDeletedUvaIds();
+  persistCustomUvas();
+  if (typeof _winSaveState === 'function') _winSaveState();
+  if (all.indexOf(currentId) !== -1) currentId = null;
+
+  if (typeof renderAll === 'function') renderAll();
+  if (typeof expandedCluster !== 'undefined' && expandedCluster && typeof renderRacimoExpansion === 'function') {
+    renderRacimoExpansion(expandedCluster);
+  }
+  if (typeof refreshBulkBar === 'function') refreshBulkBar();
+  if (typeof scheduleOriginLinesUpdate === 'function') scheduleOriginLinesUpdate();
 }
 
 // ============ askClaude bridge with diagnostics ============
@@ -2622,14 +2867,14 @@ function renderRacimoExpansion(clusterName) {
   const allUvas = Object.values(data).filter(u => u.cluster === clusterName);
 
   let cardsHTML = '';
-  topUvas.forEach(uva => {
-    cardsHTML += buildUvaCardHTML(uva, false);
-    // Then any sub-ramas of this uva
-    const subs = Object.values(data).filter(u => u.parent === uva.id);
-    subs.forEach(s => {
-      cardsHTML += buildUvaCardHTML(s, true);
-    });
-  });
+  // Recorrido recursivo: dibuja la uva y TODA su descendencia (nietas incluidas),
+  // en orden de arbol, con profundidad creciente.
+  function _appendUvaTree(uva, depth) {
+    cardsHTML += buildUvaCardHTML(uva, depth);
+    const children = Object.values(data).filter(u => u.parent === uva.id);
+    children.forEach(child => _appendUvaTree(child, depth + 1));
+  }
+  topUvas.forEach(uva => _appendUvaTree(uva, 0));
   // Plus a "Nueva uva" card at the end
   cardsHTML += '<div class="uva-add-card" data-cluster="' + clusterName + '">' +
     '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
@@ -2654,18 +2899,25 @@ function renderRacimoExpansion(clusterName) {
   scheduleOriginLinesUpdate();
 }
 
-function buildUvaCardHTML(uva, isSubrama) {
-  const subClass = isSubrama ? ' is-subrama' : '';
+function buildUvaCardHTML(uva, depth) {
+  // depth: 0 = uva tope; >0 = sub-rama (a cualquier profundidad)
+  depth = depth || 0;
+  const subClass = depth > 0 ? ' is-subrama' : '';
   const selClass = selectedUvas.has(uva.id) ? ' is-selected' : '';
-  const branchMarker = isSubrama && uva.parent && data[uva.parent]
+  const indent = depth > 0 ? Math.min(depth, 5) * 16 : 0;
+  const indentStyle = indent > 0 ? ' style="margin-left:' + indent + 'px"' : '';
+  const branchMarker = depth > 0 && uva.parent && data[uva.parent]
     ? '<span class="branch-marker">↳ ' + (data[uva.parent].title || '').slice(0, 28) + '</span>'
     : '';
-  return '<div class="uva-card' + subClass + selClass + '" data-uva-id="' + uva.id + '">' +
+  return '<div class="uva-card' + subClass + selClass + '"' + indentStyle + ' data-uva-id="' + uva.id + '">' +
     '<div class="uva-card-check" data-uva-id="' + uva.id + '">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
     '</div>' +
     branchMarker +
     '<div class="uva-card-title">' + (uva.title || '(sin título)') + '</div>' +
+    '<button class="uva-card-delete" data-uva-id="' + uva.id + '" title="Eliminar esta uva" aria-label="Eliminar">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+    '</button>' +
   '</div>';
 }
 
@@ -2683,6 +2935,13 @@ function refreshUvaCardActiveMarks() {
 
 // Wire up clicks inside the expansion
 document.getElementById('racimo-expansion').addEventListener('click', (e) => {
+  // Delete button: borrar la uva (y su descendencia)
+  const delBtn = e.target.closest('.uva-card-delete');
+  if (delBtn) {
+    e.stopPropagation();
+    deleteUva(delBtn.dataset.uvaId);
+    return;
+  }
   // Checkbox click: toggle selection without opening chat
   const check = e.target.closest('.uva-card-check');
   if (check) {
@@ -2693,12 +2952,12 @@ document.getElementById('racimo-expansion').addEventListener('click', (e) => {
   // Bulk-open / bulk-clear
   if (e.target.closest('#bulk-open')) { openSelectedUvas(); return; }
   if (e.target.closest('#bulk-clear')) { clearSelectedUvas(); return; }
-  // Card body click: open the floating chat window for that uva
+  // Card body click: abre la uva y toda su familia de sub-ramas
   const card = e.target.closest('.uva-card');
   if (card) {
     const uvaId = card.dataset.uvaId;
-    openOrFocusWindow(uvaId, true);
-    setTimeout(refreshUvaCardActiveMarks, 60);
+    openUvaWithSubramas(uvaId);
+    setTimeout(refreshUvaCardActiveMarks, 80);
     return;
   }
   const addCard = e.target.closest('.uva-add-card');
@@ -2723,7 +2982,7 @@ function ensureOriginSvg() {
 }
 
 function getOriginPointFor(uvaId) {
-  // First try: a uva-card visible in the racimo-expansion
+  // 1) una uva-card visible en la expansion del racimo
   const card = document.querySelector('.uva-card[data-uva-id="' + uvaId + '"]');
   if (card) {
     const r = card.getBoundingClientRect();
@@ -2731,14 +2990,32 @@ function getOriginPointFor(uvaId) {
       return { x: r.left + r.width / 2, y: r.bottom - 4, color: clusterColorOf(uvaId), kind: 'card' };
     }
   }
-  // Fallback: the chip of this uva's cluster
   const uva = data[uvaId];
   if (!uva) return null;
+  // 2) el chip del racimo de esta uva (solo si esta visible)
   const chips = document.querySelectorAll('.cluster-chip');
   for (const chip of chips) {
     const btn = chip.querySelector('.chip-btn[data-cluster="' + uva.cluster + '"]');
     if (btn) {
       const r = chip.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0) {
+        return { x: r.left + r.width / 2, y: r.bottom, color: clusterColorOf(uvaId), kind: 'chip' };
+      }
+    }
+  }
+  // 3) panel minimizado: apuntar a la barra "Racimos"
+  const tpToggle = document.getElementById('toppanel-toggle');
+  if (tpToggle) {
+    const r = tpToggle.getBoundingClientRect();
+    if (r.width > 0 && r.height > 0) {
+      return { x: r.left + r.width / 2, y: r.bottom, color: clusterColorOf(uvaId), kind: 'chip' };
+    }
+  }
+  // 4) ultimo recurso: el panel superior completo
+  const tr = document.querySelector('.top-right');
+  if (tr) {
+    const r = tr.getBoundingClientRect();
+    if (r.width > 0 && r.height > 0) {
       return { x: r.left + r.width / 2, y: r.bottom, color: clusterColorOf(uvaId), kind: 'chip' };
     }
   }
@@ -3690,12 +3967,35 @@ function closeWindow(uvaId) {
   if (typeof scheduleOriginLinesUpdate === 'function') scheduleOriginLinesUpdate();
 }
 
+// Abre una uva y TODAS sus sub-ramas descendientes como ventanas.
+// Genera orden y continuidad: ves la familia completa de la conversacion.
+function openUvaWithSubramas(uvaId) {
+  if (!data[uvaId]) return;
+  openOrFocusWindow(uvaId, true);
+  const descendants = (typeof getUvaDescendants === 'function') ? getUvaDescendants(uvaId) : [];
+  descendants.forEach(id => {
+    if (data[id]) openOrFocusWindow(id, false);
+  });
+  setTimeout(() => {
+    if (typeof refreshUvaCardActiveMarks === 'function') refreshUvaCardActiveMarks();
+    if (typeof scheduleOriginLinesUpdate === 'function') scheduleOriginLinesUpdate();
+    // dejar la ventana madre al frente
+    if (typeof focusWindow === 'function') focusWindow(uvaId);
+  }, 80);
+}
+
 function _createWindowElement(uvaId) {
   const d = data[uvaId];
   const cfg = (typeof CLUSTERS !== 'undefined' && CLUSTERS[d.cluster]) ? CLUSTERS[d.cluster] : { fill: '#888' };
   const win = document.createElement('div');
   win.className = 'window is-stacked';
   win.dataset.uvaId = uvaId;
+  const _hasSubs = (typeof getUvaDescendants === 'function') && getUvaDescendants(uvaId).length > 0;
+  const _branchBtn = _hasSubs
+    ? '<button class="window-branch" title="Abrir todas las sub-ramas" aria-label="Abrir sub-ramas">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8a4 4 0 0 0 4 4h6"/><path d="M18 8v4"/></svg>' +
+      '</button>'
+    : '';
 
   const parentRef = (d.parent && data[d.parent])
     ? '<div class="window-parent-ref" title="Esta uva es una sub-rama">' +
@@ -3708,6 +4008,10 @@ function _createWindowElement(uvaId) {
     '<div class="window-header">' +
       '<span class="window-cluster-dot" style="background:' + cfg.fill + ';"></span>' +
       '<span class="window-title">' + _winEscape(d.title || '(sin título)') + '</span>' +
+      _branchBtn +
+      '<button class="window-delete" title="Eliminar este chat" aria-label="Eliminar">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+      '</button>' +
       '<button class="window-close" title="Cerrar">×</button>' +
     '</div>' +
     parentRef +
@@ -3753,6 +4057,20 @@ function _createWindowElement(uvaId) {
   win.querySelector('.window-close').addEventListener('click', e => {
     e.stopPropagation();
     closeWindow(uvaId);
+  });
+
+  // Delete
+  const _winDelBtn = win.querySelector('.window-delete');
+  if (_winDelBtn) _winDelBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    deleteUva(uvaId);
+  });
+
+  // Abrir todas las sub-ramas
+  const _winBranchBtn = win.querySelector('.window-branch');
+  if (_winBranchBtn) _winBranchBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    openUvaWithSubramas(uvaId);
   });
 
   // Focus on click anywhere
@@ -3830,7 +4148,7 @@ function _positionWindow(win, uvaId) {
     windowPositions[uvaId] = pos;
   }
   pos.x = Math.max(10, Math.min(pos.x, window.innerWidth - 120));
-  pos.y = Math.max(10, Math.min(pos.y, window.innerHeight - 80));
+  pos.y = Math.max(10, pos.y);
   win.style.transform = 'translate(' + pos.x + 'px, ' + pos.y + 'px)';
 }
 
@@ -3839,35 +4157,70 @@ function _wireWindowDrag(win, uvaId) {
   let dragging = false;
   let startX = 0, startY = 0;
   let origX = 0, origY = 0;
+  let startScrollY = 0;
+  let lastEvtClientX = 0, lastEvtClientY = 0;
+  let rafId = null;
+
+  function applyDrag() {
+    // ny en coordenadas de documento: posicion original + delta del mouse + delta de scroll
+    let nx = origX + (lastEvtClientX - startX);
+    let ny = origY + (lastEvtClientY - startY) + (window.scrollY - startScrollY);
+    nx = Math.max(10, Math.min(nx, window.innerWidth - 120));
+    ny = Math.max(10, ny); // sin tope inferior: lienzo infinito hacia abajo
+    windowPositions[uvaId] = { x: nx, y: ny };
+    win.style.transform = 'translate(' + nx + 'px, ' + ny + 'px)';
+    if (typeof scheduleOriginLinesUpdate === 'function') scheduleOriginLinesUpdate();
+  }
+
+  // Loop continuo: auto-scroll suave proporcional a la cercania al borde,
+  // funciona aunque el mouse este quieto en el borde.
+  function dragLoop() {
+    if (!dragging) { rafId = null; return; }
+    const EDGE = 80;          // zona sensible en px
+    const MAX_SPEED = 11;     // px por frame en el borde mismo
+    const vh = window.innerHeight;
+    let dy = 0;
+    // Auto-scroll SOLO hacia abajo (el lienzo infinito crece hacia abajo).
+    // Hacia arriba el arrastre es libre, sin scroll automatico.
+    if (lastEvtClientY > vh - EDGE) {
+      dy = Math.min((lastEvtClientY - (vh - EDGE)) / EDGE, 1) * MAX_SPEED;
+    }
+    if (dy !== 0) {
+      window.scrollBy(0, dy);
+      applyDrag();
+    }
+    rafId = requestAnimationFrame(dragLoop);
+  }
 
   header.addEventListener('mousedown', e => {
-    if (e.target.closest('.window-close')) return;
+    if (e.target.closest('.window-close') || e.target.closest('.window-delete') || e.target.closest('.window-branch')) return;
     dragging = true;
     startX = e.clientX;
     startY = e.clientY;
+    startScrollY = window.scrollY;
+    lastEvtClientX = e.clientX;
+    lastEvtClientY = e.clientY;
     const pos = windowPositions[uvaId] || { x: 0, y: 0 };
     origX = pos.x;
     origY = pos.y;
     win.classList.add('dragging');
     focusWindow(uvaId);
     e.preventDefault();
+    if (!rafId) rafId = requestAnimationFrame(dragLoop);
   });
 
   document.addEventListener('mousemove', e => {
     if (!dragging) return;
-    let nx = origX + (e.clientX - startX);
-    let ny = origY + (e.clientY - startY);
-    nx = Math.max(10, Math.min(nx, window.innerWidth - 120));
-    ny = Math.max(10, Math.min(ny, window.innerHeight - 80));
-    windowPositions[uvaId] = { x: nx, y: ny };
-    win.style.transform = 'translate(' + nx + 'px, ' + ny + 'px)';
-    if (typeof scheduleOriginLinesUpdate === 'function') scheduleOriginLinesUpdate();
+    lastEvtClientX = e.clientX;
+    lastEvtClientY = e.clientY;
+    applyDrag();
   });
 
   document.addEventListener('mouseup', () => {
     if (dragging) {
       dragging = false;
       win.classList.remove('dragging');
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
       _winSaveState();
     }
   });
@@ -4100,30 +4453,41 @@ function toggleFocusMode() {
 
 function tileWindows(fullViewport) {
   if (!openWindows || openWindows.length === 0) return;
-  const n = openWindows.length;
-  // Use the viewport minus a left margin (sidebar zone) and top margin (chips zone)
-  // In focus mode we use the full viewport (no sidebar/top area visible)
-  const focus = !!fullViewport || document.body.classList.contains('focus-mode');
-  const leftPad = focus ? 20 : 290;
-  const topPad = focus ? 20 : 300;
-  const rightPad = 24;
-  const bottomPad = 80;
-  const availW = Math.max(400, window.innerWidth - leftPad - rightPad);
-  const availH = Math.max(300, window.innerHeight - topPad - bottomPad);
-  // Choose cols ~ ceil(sqrt(n))
-  const cols = Math.ceil(Math.sqrt(n));
-  const rows = Math.ceil(n / cols);
-  const cellW = Math.floor(availW / cols);
-  const cellH = Math.floor(availH / rows);
-  openWindows.forEach((id, i) => {
-    const r = Math.floor(i / cols);
-    const c = i % cols;
-    const x = leftPad + c * cellW + 8;
-    const y = topPad + r * cellH + 8;
-    windowPositions[id] = { x: x, y: y };
-    const win = document.querySelector('.window[data-uva-id="' + id + '"]');
-    if (win) win.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+  // Reorganiza como arbol de carpetas: cada raiz y sus sub-ramas debajo,
+  // indentadas por profundidad. Recorrido DFS, apiladas verticalmente.
+  const openSet = {};
+  openWindows.forEach(id => { openSet[id] = true; });
+
+  function openChildren(id) {
+    return openWindows.filter(cid => data[cid] && data[cid].parent === id);
+  }
+  // raices: ventanas abiertas cuyo padre no esta abierto (o no tienen padre)
+  const roots = openWindows.filter(id => {
+    const p = data[id] && data[id].parent;
+    return !p || !openSet[p];
   });
+
+  const INDENT = 46;   // desplazamiento a la derecha por nivel de profundidad
+  const GAP = 16;      // separacion vertical entre ventanas
+  const baseX = 64;
+  let cursorY = 96;
+
+  function placeNode(id, depth) {
+    const win = document.querySelector('.window[data-uva-id="' + id + '"]');
+    const x = baseX + depth * INDENT;
+    const y = cursorY;
+    windowPositions[id] = { x: x, y: y };
+    let hgt = 320;
+    if (win) {
+      win.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+      const rh = win.getBoundingClientRect().height;
+      if (rh > 0) hgt = rh;
+    }
+    cursorY += hgt + GAP;
+    openChildren(id).forEach(cid => placeNode(cid, depth + 1));
+  }
+  roots.forEach(rootId => placeNode(rootId, 0));
+
   _winSaveState();
   if (typeof scheduleOriginLinesUpdate === 'function') scheduleOriginLinesUpdate();
 }
@@ -4224,6 +4588,176 @@ function updateParentChildCords() {
 // Also redraw on resize
 window.addEventListener('resize', () => setTimeout(updateParentChildCords, 60));
 
+
+// =============================================================
+// === Respaldo: exportar / importar todo el Racimo ============
+// =============================================================
+const LS_LAST_BACKUP = 'racimo_last_backup_v1';
+
+function _racimoKeys() {
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && (k.indexOf('racimo_') === 0 || k.indexOf('racimo:') === 0)) keys.push(k);
+  }
+  return keys;
+}
+
+function exportRacimoData() {
+  const data = {};
+  _racimoKeys().forEach(k => { data[k] = localStorage.getItem(k); });
+  const payload = {
+    format: 'racimo-export',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    keyCount: Object.keys(data).length,
+    data: data
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = 'racimo-' + stamp + '.racimo';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  try { localStorage.setItem(LS_LAST_BACKUP, new Date().toISOString()); } catch (e) {}
+  updateBackupNote();
+}
+
+function importRacimoData(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    let payload;
+    try {
+      payload = JSON.parse(e.target.result);
+    } catch (err) {
+      alert('No se pudo leer el archivo: no es un JSON valido.');
+      return;
+    }
+    if (!payload || payload.format !== 'racimo-export' || !payload.data || typeof payload.data !== 'object') {
+      alert('Ese archivo no parece un respaldo de Racimo (.racimo).');
+      return;
+    }
+    const incoming = Object.keys(payload.data);
+    const when = (payload.exportedAt || '').slice(0, 10) || 'fecha desconocida';
+    if (!confirm('Esto va a REEMPLAZAR tus datos actuales con el respaldo:\n\n' +
+                 '- ' + incoming.length + ' registros\n' +
+                 '- exportado el ' + when + '\n\n' +
+                 'Tu estado actual se perdera. Continuar?')) return;
+    _racimoKeys().forEach(k => localStorage.removeItem(k));
+    incoming.forEach(k => {
+      try { localStorage.setItem(k, payload.data[k]); } catch (err) {}
+    });
+    alert('Respaldo restaurado. La pagina se va a recargar.');
+    location.reload();
+  };
+  reader.onerror = () => alert('Error al leer el archivo.');
+  reader.readAsText(file);
+}
+
+function updateBackupNote() {
+  const note = document.getElementById('backup-note');
+  if (!note) return;
+  let last = null;
+  try { last = localStorage.getItem(LS_LAST_BACKUP); } catch (e) {}
+  if (last) {
+    const d = new Date(last);
+    const days = Math.floor((Date.now() - d.getTime()) / 86400000);
+    if (days <= 0) note.textContent = 'Ultimo respaldo: hoy';
+    else if (days === 1) note.textContent = 'Ultimo respaldo: ayer';
+    else note.textContent = 'Ultimo respaldo: hace ' + days + ' dias';
+    note.style.color = days >= 7 ? '#C0392B' : '#888780';
+  } else {
+    note.textContent = 'Aun sin respaldo - exporta tu trabajo';
+    note.style.color = '#C0392B';
+  }
+}
+
+(function wireBackup() {
+  const exportBtn = document.getElementById('backup-export');
+  const importBtn = document.getElementById('backup-import');
+  const fileInput = document.getElementById('backup-file-input');
+  if (exportBtn) exportBtn.addEventListener('click', exportRacimoData);
+  if (importBtn && fileInput) {
+    importBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) importRacimoData(file);
+      e.target.value = '';
+    });
+  }
+  updateBackupNote();
+})();
+
+// === Toggle de la seccion colapsable "Como funciona" ===
+(function wireHelpToggle() {
+  const toggle = document.getElementById('help-toggle');
+  const panel = document.getElementById('help-collapsible');
+  if (!toggle || !panel) return;
+  const KEY = 'racimo_help_open_v1';
+  let open = false;
+  try { open = localStorage.getItem(KEY) === '1'; } catch (e) {}
+  function apply() {
+    panel.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  apply();
+  toggle.addEventListener('click', () => {
+    open = !open;
+    try { localStorage.setItem(KEY, open ? '1' : '0'); } catch (e) {}
+    apply();
+  });
+})();
+
+// === Contraer / expandir el panel izquierdo ===
+(function wireSidebarToggle() {
+  const toggle = document.getElementById('sidebar-toggle');
+  const app = document.querySelector('.app');
+  if (!toggle || !app) return;
+  const KEY = 'racimo_sidebar_collapsed_v1';
+  let collapsed = true; // por defecto contraido
+  try {
+    const v = localStorage.getItem(KEY);
+    if (v !== null) collapsed = (v === '1');
+  } catch (e) {}
+  function apply() {
+    app.classList.toggle('sidebar-collapsed', collapsed);
+    toggle.title = collapsed ? 'Expandir panel' : 'Contraer panel';
+    toggle.setAttribute('aria-label', toggle.title);
+    if (typeof scheduleOriginLinesUpdate === 'function') setTimeout(scheduleOriginLinesUpdate, 80);
+    if (typeof updateParentChildCords === 'function') setTimeout(updateParentChildCords, 80);
+  }
+  apply();
+  toggle.addEventListener('click', () => {
+    collapsed = !collapsed;
+    try { localStorage.setItem(KEY, collapsed ? '1' : '0'); } catch (e) {}
+    apply();
+  });
+})();
+
+// === Minimizar / mostrar el panel de racimos ===
+(function wireTopPanelToggle() {
+  const toggle = document.getElementById('toppanel-toggle');
+  const app = document.querySelector('.app');
+  if (!toggle || !app) return;
+  const KEY = 'racimo_toppanel_collapsed_v1';
+  let collapsed = false;
+  try { collapsed = localStorage.getItem(KEY) === '1'; } catch (e) {}
+  function apply() {
+    app.classList.toggle('toppanel-collapsed', collapsed);
+    toggle.title = collapsed ? 'Mostrar panel de racimos' : 'Minimizar panel de racimos';
+    if (typeof scheduleOriginLinesUpdate === 'function') setTimeout(scheduleOriginLinesUpdate, 80);
+  }
+  apply();
+  toggle.addEventListener('click', () => {
+    collapsed = !collapsed;
+    try { localStorage.setItem(KEY, collapsed ? '1' : '0'); } catch (e) {}
+    apply();
+  });
+})();
 </script>
 
 <div id="window-dock" aria-label="Ventanas abiertas">
@@ -4237,9 +4771,3 @@ window.addEventListener('resize', () => setTimeout(updateParentChildCords, 60));
 </div>
 </body>
 </html>
-  });
-}
-
-// Hook into the renderRacimoExpansion path
-(function() {
-  const _
